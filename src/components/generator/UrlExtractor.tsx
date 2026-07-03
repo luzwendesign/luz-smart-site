@@ -85,7 +85,7 @@ export default function UrlExtractor() {
 
       await new Promise((r) => setTimeout(r, 600))
 
-      const lp = createDefaultLP(result.data)
+      const lp = { ...createDefaultLP(result.data), userId: user?.id }
       setCurrentLP(lp)
       addLandingPage(lp)
       setCurrentStep(3)

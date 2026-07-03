@@ -99,6 +99,9 @@ export interface LandingPageConfig {
   // Typography
   fontSize?: 'small' | 'normal' | 'large' | 'xlarge'
 
+  // Dono da LP
+  userId?: string
+
   // Status
   published: boolean
   publishedAt?: string

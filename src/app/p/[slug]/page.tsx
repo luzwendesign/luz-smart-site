@@ -4,9 +4,10 @@ import { useParams } from 'next/navigation'
 import type { LandingPageConfig } from '@/types'
 import {
   BedDouble, Bath, Car, Ruler, MapPin, Phone, Mail,
-  CheckCircle, Send, Instagram, Facebook, Shield, Zap, Award
+  CheckCircle, Send, Instagram, Facebook, Zap, Award
 } from 'lucide-react'
 import { formatWhatsApp, PROPERTY_ICONS } from '@/lib/utils'
+import LeadForm from '@/components/landing/LeadForm'
 
 const FONT_STACKS: Record<string, string> = {
   'plus-jakarta': "'Plus Jakarta Sans', sans-serif",
@@ -186,18 +187,15 @@ function LandingPageFull({ lp }: { lp: LandingPageConfig }) {
                 <div className="bg-white p-7 shadow-2xl" style={{ borderRadius: '20px' }}>
                   <h3 className="text-xl font-bold text-gray-900 mb-1">Fale com o corretor</h3>
                   <p className="text-gray-500 text-sm mb-5">Receba mais informações sobre este imóvel.</p>
-                  <div className="space-y-3">
-                    <input className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 text-gray-800 text-sm focus:outline-none placeholder-gray-400" style={{ borderRadius: btnRadius }} placeholder="Nome completo" />
-                    <input className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 text-gray-800 text-sm focus:outline-none placeholder-gray-400" style={{ borderRadius: btnRadius }} placeholder="WhatsApp" />
-                    <input className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 text-gray-800 text-sm focus:outline-none placeholder-gray-400" style={{ borderRadius: btnRadius }} placeholder="E-mail" />
-                    <button className="w-full py-4 font-bold text-gray-900 text-sm shadow-lg hover:opacity-90"
-                      style={{ background: `linear-gradient(135deg, ${primaryColor}, ${accentColor})`, borderRadius: btnRadius }}>
-                      Quero mais informações
-                    </button>
-                    <p className="text-center text-xs text-gray-400 flex items-center justify-center gap-1">
-                      <Shield className="w-3 h-3" /> Atendimento rápido e seguro
-                    </p>
-                  </div>
+                  <LeadForm
+                    landingPageId={lp.id}
+                    landingPageSlug={lp.customSlug}
+                    landingPageTitle={p.title}
+                    userId={lp.userId || lp.id}
+                    primaryColor={primaryColor}
+                    accentColor={accentColor}
+                    btnRadius={btnRadius}
+                  />
                 </div>
               </div>
             </div>
@@ -395,17 +393,15 @@ function LandingPageFull({ lp }: { lp: LandingPageConfig }) {
               <h2 className="text-3xl font-black text-gray-900 text-center mb-4">Entre em contato</h2>
               <p className="text-gray-500 text-center mb-10">Preencha o formulário e responderemos em até 2 horas</p>
               <div className="bg-gray-50 p-8 border border-gray-100" style={{ borderRadius: '20px' }}>
-                <div className="space-y-4">
-                  <input className="w-full px-4 py-3.5 bg-white border border-gray-200 text-gray-800 text-sm focus:outline-none placeholder-gray-400" style={{ borderRadius: btnRadius }} placeholder="Nome completo" />
-                  <input className="w-full px-4 py-3.5 bg-white border border-gray-200 text-gray-800 text-sm focus:outline-none placeholder-gray-400" style={{ borderRadius: btnRadius }} placeholder="Telefone / WhatsApp" />
-                  <input className="w-full px-4 py-3.5 bg-white border border-gray-200 text-gray-800 text-sm focus:outline-none placeholder-gray-400" style={{ borderRadius: btnRadius }} placeholder="E-mail" />
-                  <textarea className="w-full px-4 py-3.5 bg-white border border-gray-200 text-gray-800 text-sm focus:outline-none placeholder-gray-400 resize-none" style={{ borderRadius: btnRadius }} rows={3}
-                    placeholder="Mensagem" defaultValue={`Olá! Tenho interesse no imóvel: ${p.title}`} />
-                  <button className="w-full py-4 font-bold text-gray-900 shadow-lg hover:opacity-90"
-                    style={{ background: `linear-gradient(135deg, ${primaryColor}, ${accentColor})`, borderRadius: btnRadius }}>
-                    Quero conhecer este imóvel
-                  </button>
-                </div>
+                <LeadForm
+                  landingPageId={lp.id}
+                  landingPageSlug={lp.customSlug}
+                  landingPageTitle={p.title}
+                  userId={lp.userId || lp.id}
+                  primaryColor={primaryColor}
+                  accentColor={accentColor}
+                  btnRadius={btnRadius}
+                />
               </div>
             </div>
           </section>
