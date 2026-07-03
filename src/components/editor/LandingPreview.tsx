@@ -108,25 +108,25 @@ function LandingPage({ lp, isMobile, isTablet }: { lp: any; isMobile: boolean; i
       )}
 
       {/* NAVBAR */}
-      <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 px-4 py-3">
+      <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 px-3 py-2">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: primaryColor }}>
-              <Zap className="w-3.5 h-3.5 text-white" />
+          <div className="flex items-center gap-1.5">
+            <div className="w-6 h-6 rounded-md flex items-center justify-center flex-shrink-0" style={{ background: primaryColor }}>
+              <Zap className="w-3 h-3 text-white" />
             </div>
-            <span className="font-bold text-gray-900 text-base truncate max-w-[140px]">{p.agencyName || 'Luz Smart Site'}</span>
+            <span className="font-bold text-gray-900 text-sm truncate max-w-[130px]">{p.agencyName || 'Luz Smart Site'}</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             {sm && (
-              <a href={`tel:${p.phone}`} className="flex items-center gap-1.5 text-gray-600 text-xs font-medium">
-                <Phone className="w-3.5 h-3.5" /> {p.phone}
+              <a href={`tel:${p.phone}`} className="flex items-center gap-1 text-gray-600 text-xs font-medium">
+                <Phone className="w-3 h-3" /> {p.phone}
               </a>
             )}
             <a
               href={waLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-3 py-2 rounded-xl text-white text-xs font-bold shadow hover:opacity-90"
+              className="px-2.5 py-1.5 rounded-lg text-white text-xs font-bold shadow hover:opacity-90"
               style={{ background: primaryColor }}
             >
               {isMobile ? 'Visita' : 'Agendar visita'}
@@ -137,37 +137,39 @@ function LandingPage({ lp, isMobile, isTablet }: { lp: any; isMobile: boolean; i
 
       {/* HERO */}
       {enabledSections.find((s: any) => s.type === 'hero') && (
-        <section className="relative flex items-center" style={{ minHeight: isMobile ? '100vw' : '85vh' }}>
+        <section className="relative flex items-start" style={{ minHeight: isMobile ? 'auto' : '85vh' }}>
           {p.images[0] && (
-            <div className="absolute inset-0">
+            <div className={`${isMobile ? 'absolute inset-0' : 'absolute inset-0'}`}>
               <img src={p.images[0]} alt={p.title} className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/80" />
             </div>
           )}
 
-          <div className="relative z-10 w-full px-4 py-10">
+          <div className={`relative z-10 w-full px-3 ${isMobile ? 'py-5' : 'py-10'}`} style={isMobile ? { paddingBottom: '1.25rem' } : {}}>
             {isMobile ? (
-              /* Mobile hero — single column, stacked */
-              <div className="space-y-4">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 backdrop-blur text-white text-xs font-medium border border-white/20">
+              /* Mobile hero — single column, stacked, compact */
+              <div className="space-y-3">
+                <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/10 backdrop-blur text-white text-xs font-medium border border-white/20">
                   <MapPin className="w-3 h-3 flex-shrink-0" style={{ color: accentColor }} />
                   <span className="truncate">{p.neighborhood} · {p.city}</span>
                 </div>
-                <h1 className={`${heroTitleSize} font-black text-white leading-tight`}>{p.title}</h1>
-                <div>
-                  <p className="text-white/60 text-xs mb-0.5">Valor</p>
-                  <p className="text-3xl font-black" style={{ color: accentColor }}>{p.priceFormatted}</p>
+                <h1 className="text-2xl font-black text-white leading-tight">{p.title}</h1>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-white/60 text-xs mb-0.5">Valor</p>
+                    <p className="text-2xl font-black" style={{ color: accentColor }}>{p.priceFormatted}</p>
+                  </div>
                 </div>
                 {/* Stats row — 2 columns on mobile */}
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-2 gap-1.5">
                   {[
                     { icon: Ruler, label: `${p.area} m²` },
-                    { icon: BedDouble, label: `${p.bedrooms} Quartos` },
+                    { icon: BedDouble, label: `${p.bedrooms} Qtos` },
                     { icon: Bath, label: `${p.bathrooms} Banh.` },
                     { icon: Car, label: `${p.parking} Vagas` },
                   ].map(({ icon: Icon, label }) => (
-                    <div key={label} className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-3 py-2.5 rounded-xl border border-white/15">
-                      <Icon className="w-4 h-4 flex-shrink-0" style={{ color: accentColor }} />
+                    <div key={label} className="flex items-center gap-1.5 bg-white/10 backdrop-blur-sm px-2.5 py-2 rounded-lg border border-white/15">
+                      <Icon className="w-3.5 h-3.5 flex-shrink-0" style={{ color: accentColor }} />
                       <p className="text-white font-bold text-xs">{label}</p>
                     </div>
                   ))}
@@ -175,7 +177,7 @@ function LandingPage({ lp, isMobile, isTablet }: { lp: any; isMobile: boolean; i
                 <div className="flex gap-2">
                   <a
                     href="#contato"
-                    className="flex-1 text-center px-4 py-3 font-bold text-dark-950 text-sm shadow-xl hover:opacity-90"
+                    className="flex-1 text-center px-3 py-2.5 font-bold text-dark-950 text-xs shadow-xl hover:opacity-90"
                     style={{ background: `linear-gradient(135deg, ${primaryColor}, ${accentColor})`, borderRadius: btnRadius }}
                   >
                     {ctaPrimary}
@@ -184,22 +186,22 @@ function LandingPage({ lp, isMobile, isTablet }: { lp: any; isMobile: boolean; i
                     href={waLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex-1 text-center px-4 py-3 font-bold text-white text-sm bg-green-600 hover:bg-green-500"
+                    className="flex-1 text-center px-3 py-2.5 font-bold text-white text-xs bg-green-600 hover:bg-green-500"
                     style={{ borderRadius: btnRadius }}
                   >
                     WhatsApp
                   </a>
                 </div>
                 {/* Lead form on mobile — compact */}
-                <div className="bg-white rounded-2xl p-5 shadow-2xl mt-2">
-                  <h3 className="text-base font-bold text-gray-900 mb-1">Fale com o corretor</h3>
-                  <p className="text-gray-500 text-xs mb-4">Receba mais informações.</p>
-                  <div className="space-y-2.5">
-                    <input className="w-full px-3 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 text-sm focus:outline-none placeholder-gray-400" placeholder="Nome completo" />
-                    <input className="w-full px-3 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 text-sm focus:outline-none placeholder-gray-400" placeholder="WhatsApp" />
-                    <input className="w-full px-3 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 text-sm focus:outline-none placeholder-gray-400" placeholder="E-mail" />
+                <div className="bg-white rounded-xl p-4 shadow-2xl">
+                  <h3 className="text-sm font-bold text-gray-900 mb-1">Fale com o corretor</h3>
+                  <p className="text-gray-500 text-xs mb-3">Receba mais informações.</p>
+                  <div className="space-y-2">
+                    <input className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-800 text-xs focus:outline-none placeholder-gray-400" placeholder="Nome completo" />
+                    <input className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-800 text-xs focus:outline-none placeholder-gray-400" placeholder="WhatsApp" />
+                    <input className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-800 text-xs focus:outline-none placeholder-gray-400" placeholder="E-mail" />
                     <button
-                      className="w-full py-3.5 rounded-xl font-bold text-dark-950 text-sm shadow-lg"
+                      className="w-full py-2.5 rounded-lg font-bold text-dark-950 text-xs shadow-lg"
                       style={{ background: `linear-gradient(135deg, ${primaryColor}, ${accentColor})` }}
                     >
                       Quero mais informações
@@ -302,8 +304,8 @@ function LandingPage({ lp, isMobile, isTablet }: { lp: any; isMobile: boolean; i
 
       {/* FEATURES */}
       {enabledSections.find((s: any) => s.type === 'features') && (
-        <section className="py-12 bg-gray-50">
-          <div className="max-w-6xl mx-auto px-4">
+        <section className={`${isMobile ? 'py-6' : 'py-12'} bg-gray-50`}>
+          <div className={`max-w-6xl mx-auto ${isMobile ? 'px-3' : 'px-4'}`}>
             <h2 className={`font-black text-gray-900 text-center mb-8 ${isMobile ? 'text-2xl' : 'text-3xl'}`}>Sobre o imóvel</h2>
             <div className={`grid gap-3 ${isMobile ? 'grid-cols-2' : isTablet ? 'grid-cols-3' : 'grid-cols-6'}`}>
               {[
@@ -328,8 +330,8 @@ function LandingPage({ lp, isMobile, isTablet }: { lp: any; isMobile: boolean; i
 
       {/* GALLERY */}
       {enabledSections.find((s: any) => s.type === 'gallery') && p.images.length > 1 && (
-        <section className="py-12 bg-white">
-          <div className="max-w-6xl mx-auto px-4">
+        <section className={`${isMobile ? 'py-6' : 'py-12'} bg-white`}>
+          <div className={`max-w-6xl mx-auto ${isMobile ? 'px-3' : 'px-4'}`}>
             <h2 className={`font-black text-gray-900 text-center mb-2 ${isMobile ? 'text-2xl' : 'text-3xl'}`}>Galeria de fotos</h2>
             <p className="text-gray-500 text-center mb-6 text-sm">Conheça cada detalhe deste imóvel</p>
             <div className={`grid gap-2 ${isMobile ? 'grid-cols-2' : 'grid-cols-4'}`}>
@@ -351,8 +353,8 @@ function LandingPage({ lp, isMobile, isTablet }: { lp: any; isMobile: boolean; i
 
       {/* PRICE BOX */}
       {enabledSections.find((s: any) => s.type === 'price_box') && (
-        <section className="py-12 bg-white">
-          <div className="max-w-4xl mx-auto px-4">
+        <section className={`${isMobile ? 'py-6' : 'py-12'} bg-white`}>
+          <div className={`max-w-4xl mx-auto ${isMobile ? 'px-3' : 'px-4'}`}>
             <h2 className={`font-black text-gray-900 text-center mb-8 ${isMobile ? 'text-2xl' : 'text-3xl'}`}>Valor do imóvel</h2>
             <div className="max-w-sm mx-auto bg-white border-2 rounded-3xl shadow-xl overflow-hidden" style={{ borderColor: `${primaryColor}30` }}>
               <div className="px-6 pt-7 pb-5 text-center" style={{ background: `linear-gradient(135deg, ${primaryColor}10, ${accentColor}08)` }}>
@@ -406,8 +408,8 @@ function LandingPage({ lp, isMobile, isTablet }: { lp: any; isMobile: boolean; i
 
       {/* ABOUT */}
       {enabledSections.find((s: any) => s.type === 'about') && (
-        <section className="py-12 bg-gray-50">
-          <div className="max-w-4xl mx-auto px-4">
+        <section className={`${isMobile ? 'py-6' : 'py-12'} bg-gray-50`}>
+          <div className={`max-w-4xl mx-auto ${isMobile ? 'px-3' : 'px-4'}`}>
             <h2 className={`font-black text-gray-900 text-center mb-2 ${isMobile ? 'text-2xl' : 'text-3xl'}`}>Descrição completa</h2>
             <p className="text-gray-500 text-center mb-8 text-sm">Tudo que você precisa saber sobre este imóvel</p>
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
@@ -433,8 +435,8 @@ function LandingPage({ lp, isMobile, isTablet }: { lp: any; isMobile: boolean; i
       {/* AMENITIES */}
       {enabledSections.find((s: any) => s.type === 'amenities') && (
         ((p.availableItems && p.availableItems.length > 0) || (p.unavailableItems && p.unavailableItems.length > 0)) && (
-          <section className="py-12 bg-white">
-            <div className="max-w-5xl mx-auto px-4">
+          <section className={`${isMobile ? 'py-6' : 'py-12'} bg-white`}>
+            <div className={`max-w-5xl mx-auto ${isMobile ? 'px-3' : 'px-4'}`}>
               <h2 className={`font-black text-gray-900 text-center mb-2 ${isMobile ? 'text-2xl' : 'text-3xl'}`}>Itens do imóvel</h2>
               <p className="text-gray-500 text-center mb-8 text-sm">Veja tudo que este imóvel oferece</p>
               <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'grid-cols-2'}`}>
@@ -478,8 +480,8 @@ function LandingPage({ lp, isMobile, isTablet }: { lp: any; isMobile: boolean; i
 
       {/* HIGHLIGHTS */}
       {enabledSections.find((s: any) => s.type === 'highlights') && p.highlights.length > 0 && (
-        <section className="py-12 bg-white">
-          <div className="max-w-6xl mx-auto px-4">
+        <section className={`${isMobile ? 'py-6' : 'py-12'} bg-white`}>
+          <div className={`max-w-6xl mx-auto ${isMobile ? 'px-3' : 'px-4'}`}>
             <h2 className={`font-black text-gray-900 text-center mb-2 ${isMobile ? 'text-2xl' : 'text-3xl'}`}>Diferenciais</h2>
             <p className="text-gray-500 text-center mb-8 text-sm">O que faz este imóvel ser especial</p>
             <div className={`grid gap-3 ${isMobile ? 'grid-cols-2' : isTablet ? 'grid-cols-3' : 'grid-cols-4'}`}>
@@ -518,8 +520,8 @@ function LandingPage({ lp, isMobile, isTablet }: { lp: any; isMobile: boolean; i
 
       {/* LOCATION */}
       {enabledSections.find((s: any) => s.type === 'location') && (
-        <section className="py-12 bg-white">
-          <div className="max-w-6xl mx-auto px-4">
+        <section className={`${isMobile ? 'py-6' : 'py-12'} bg-white`}>
+          <div className={`max-w-6xl mx-auto ${isMobile ? 'px-3' : 'px-4'}`}>
             <h2 className={`font-black text-gray-900 text-center mb-2 ${isMobile ? 'text-2xl' : 'text-3xl'}`}>Localização</h2>
             <p className="text-gray-500 text-center mb-8 text-sm flex items-center justify-center gap-1 flex-wrap">
               <MapPin className="w-4 h-4 flex-shrink-0" style={{ color: primaryColor }} />
@@ -540,7 +542,7 @@ function LandingPage({ lp, isMobile, isTablet }: { lp: any; isMobile: boolean; i
 
       {/* AGENT */}
       {enabledSections.find((s: any) => s.type === 'agent') && (
-        <section className="py-12 bg-gray-50">
+        <section className={`${isMobile ? 'py-6' : 'py-12'} bg-gray-50`}>
           <div className="max-w-xl mx-auto px-4 text-center">
             <div className="w-20 h-20 rounded-full bg-gray-200 mx-auto mb-3 overflow-hidden flex items-center justify-center" style={{ background: `${primaryColor}20` }}>
               <span className="text-2xl font-black" style={{ color: primaryColor }}>{p.agentName.charAt(0)}</span>
@@ -564,8 +566,8 @@ function LandingPage({ lp, isMobile, isTablet }: { lp: any; isMobile: boolean; i
 
       {/* CONTACT */}
       {enabledSections.find((s: any) => s.type === 'contact') && (
-        <section id="contato" className="py-12 bg-white">
-          <div className="max-w-xl mx-auto px-4">
+        <section id="contato" className={`${isMobile ? 'py-6' : 'py-12'} bg-white`}>
+          <div className={`max-w-xl mx-auto ${isMobile ? 'px-3' : 'px-4'}`}>
             <h2 className={`font-black text-gray-900 text-center mb-2 ${isMobile ? 'text-2xl' : 'text-3xl'}`}>Entre em contato</h2>
             <p className="text-gray-500 text-center mb-8 text-sm">Preencha o formulário e responderemos em até 2 horas</p>
             <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100">
