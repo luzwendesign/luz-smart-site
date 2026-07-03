@@ -306,8 +306,8 @@ function scrapeOlx(html: string): Partial<PropertyData> {
         result.priceFormatted = price > 0 ? formatPrice(price) : 'Consulte o preço'
 
         const props: Record<string, string> = {}
-        ;(ad.properties || []).forEach((p: Record<string, unknown>) => {
-          props[String(p.name)] = String(p.value || p.values?.[0] || '')
+        ;(ad.properties || []).forEach((p: { name?: unknown; value?: unknown; values?: unknown[] }) => {
+          props[String(p.name)] = String(p.value ?? (p.values && p.values[0]) ?? '')
         })
         result.bedrooms = toNum(props['rooms'] || props['bedrooms'] || '0') || 0
         result.bathrooms = toNum(props['bathrooms'] || '1') || 1
