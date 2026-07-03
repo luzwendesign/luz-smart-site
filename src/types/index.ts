@@ -91,9 +91,10 @@ export interface LandingPageConfig {
   googleTagManager?: string
   customScripts?: string
 
-  // Domínio
+  // Domínio / Link
   domain?: string
   subdomain?: string
+  customSlug?: string
 
   // Typography
   fontSize?: 'small' | 'normal' | 'large' | 'xlarge'

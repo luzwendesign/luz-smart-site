@@ -3,7 +3,7 @@ import { useState } from 'react'
 import {
   Home, Image, Palette, Type, MousePointer, Globe, Code,
   BarChart2, ChevronDown, ChevronUp, Sparkles, Loader2,
-  Eye, EyeOff, GripVertical, Plus, Trash2
+  Eye, EyeOff, GripVertical, Plus, Trash2, Share2, Copy, CheckCircle, ExternalLink
 } from 'lucide-react'
 import { useAppStore } from '@/lib/store'
 import { cn } from '@/lib/utils'
@@ -16,9 +16,9 @@ const TABS = [
   { id: 'fonts', label: 'Tipografia', icon: Type },
   { id: 'buttons', label: 'Botões', icon: MousePointer },
   { id: 'sections', label: 'Seções', icon: Eye },
+  { id: 'share', label: 'Compartilhar', icon: Share2 },
   { id: 'seo', label: 'SEO', icon: Globe },
   { id: 'integrations', label: 'Pixel & Scripts', icon: Code },
-  { id: 'domain', label: 'Domínio', icon: Globe },
   { id: 'stats', label: 'Stats', icon: BarChart2 },
 ]
 
@@ -102,9 +102,9 @@ export default function EditorPanel() {
         {editorTab === 'fonts' && <FontsTab lp={lp} updateCurrentLP={updateCurrentLP} />}
         {editorTab === 'buttons' && <ButtonsTab lp={lp} updateCurrentLP={updateCurrentLP} />}
         {editorTab === 'sections' && <SectionsTab lp={lp} updateCurrentLP={updateCurrentLP} />}
+        {editorTab === 'share' && <ShareTab lp={lp} updateCurrentLP={updateCurrentLP} />}
         {editorTab === 'seo' && <SEOTab p={p} updatePropertyData={updatePropertyData} />}
         {editorTab === 'integrations' && <IntegrationsTab lp={lp} updateCurrentLP={updateCurrentLP} />}
-        {editorTab === 'domain' && <DomainTab lp={lp} updateCurrentLP={updateCurrentLP} />}
         {editorTab === 'stats' && <StatsTab lp={lp} />}
       </div>
     </div>
@@ -999,6 +999,145 @@ function CepField({ value, onUpdate }: { value: string; onUpdate: (patch: any) =
       {loading && <Loader2 className="w-4 h-4 text-brand-400 animate-spin flex-shrink-0" />}
       {status === 'ok' && <span className="text-green-400 text-xs font-semibold flex-shrink-0">✓ OK</span>}
       {status === 'error' && <span className="text-red-400 text-xs flex-shrink-0">CEP inválido</span>}
+    </div>
+  )
+}
+
+// ─── Share Tab ────────────────────────────────────────────────────────────────
+function ShareTab({ lp, updateCurrentLP }: any) {
+  const [slug, setSlug] = useState(lp.customSlug || '')
+  const [copied, setCopied] = useState(false)
+  const [slugError, setSlugError] = useState('')
+
+  const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://luz-smart-site.vercel.app'
+  const shareUrl = slug ? `${baseUrl}/p/${slug}` : null
+  const previewUrl = `${baseUrl}/preview/${lp.id}`
+
+  function sanitizeSlug(value: string) {
+    return value
+      .toLowerCase()
+      .normalize('NFD').replace(/[̀-ͯ]/g, '') // remove acentos
+      .replace(/[^a-z0-9-]/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '')
+  }
+
+  function handleSlugChange(value: string) {
+    const clean = sanitizeSlug(value)
+    setSlug(clean)
+    setSlugError('')
+  }
+
+  function saveSlug() {
+    if (!slug) { setSlugError('Digite um link personalizado.'); return }
+    if (slug.length < 3) { setSlugError('Mínimo 3 caracteres.'); return }
+    updateCurrentLP({ customSlug: slug })
+    toast.success('Link personalizado salvo!')
+  }
+
+  function copyUrl(url: string) {
+    navigator.clipboard.writeText(url)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+    toast.success('Link copiado!')
+  }
+
+  return (
+    <div className="p-4 space-y-4">
+      {/* Link personalizado */}
+      <div className="card-dark p-4 space-y-3">
+        <div className="flex items-center gap-2 mb-1">
+          <Share2 className="w-4 h-4 text-brand-400" />
+          <span className="text-sm font-bold text-white">Link personalizado</span>
+        </div>
+        <p className="text-xs text-dark-400">
+          Crie um link amigável para compartilhar com seus clientes.
+        </p>
+
+        <div>
+          <label className="block text-xs font-semibold text-dark-400 mb-1.5">Seu link</label>
+          <div className="flex items-center gap-1.5 bg-dark-800 border border-dark-700 rounded-xl px-3 py-2.5 text-xs">
+            <span className="text-dark-500 whitespace-nowrap">{baseUrl}/p/</span>
+            <input
+              className="flex-1 bg-transparent text-white focus:outline-none min-w-0"
+              placeholder="meu-apartamento-centro"
+              value={slug}
+              onChange={(e) => handleSlugChange(e.target.value)}
+            />
+          </div>
+          {slugError && <p className="text-red-400 text-xs mt-1">{slugError}</p>}
+          <p className="text-dark-600 text-xs mt-1">Só letras, números e hífens. Sem espaço.</p>
+        </div>
+
+        <button onClick={saveSlug} className="btn-primary w-full justify-center text-xs py-2.5">
+          Salvar link
+        </button>
+      </div>
+
+      {/* Link amigável gerado */}
+      {shareUrl && (
+        <div className="card-dark p-4 space-y-3">
+          <p className="text-xs font-bold text-white flex items-center gap-2">
+            <CheckCircle className="w-4 h-4 text-green-400" /> Link para compartilhar
+          </p>
+          <div className="bg-dark-800 rounded-xl px-3 py-2.5 flex items-center gap-2">
+            <span className="text-xs text-brand-400 flex-1 truncate">{shareUrl}</span>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => copyUrl(shareUrl)}
+              className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-brand-400/10 text-brand-400 hover:bg-brand-400/20 text-xs font-semibold transition-colors"
+            >
+              {copied ? <CheckCircle className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+              {copied ? 'Copiado!' : 'Copiar link'}
+            </button>
+            <a
+              href={shareUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-dark-700 text-dark-300 hover:text-white text-xs font-semibold transition-colors"
+            >
+              <ExternalLink className="w-3.5 h-3.5" /> Ver
+            </a>
+          </div>
+        </div>
+      )}
+
+      {/* Link de preview interno */}
+      <div className="card-dark p-4 space-y-3">
+        <p className="text-xs font-bold text-white">Link de preview (interno)</p>
+        <p className="text-xs text-dark-400">Use para visualizar antes de compartilhar.</p>
+        <div className="bg-dark-800 rounded-xl px-3 py-2.5 flex items-center gap-2">
+          <span className="text-xs text-dark-400 flex-1 truncate">{previewUrl}</span>
+        </div>
+        <div className="flex gap-2">
+          <button
+            onClick={() => copyUrl(previewUrl)}
+            className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-dark-700 text-dark-300 hover:text-white text-xs font-semibold transition-colors"
+          >
+            <Copy className="w-3.5 h-3.5" /> Copiar
+          </button>
+          <a
+            href={previewUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-dark-700 text-dark-300 hover:text-white text-xs font-semibold transition-colors"
+          >
+            <ExternalLink className="w-3.5 h-3.5" /> Abrir
+          </a>
+        </div>
+      </div>
+
+      {/* Dica de compartilhamento */}
+      <div className="bg-brand-400/5 border border-brand-400/20 rounded-xl p-4">
+        <p className="text-xs font-semibold text-brand-400 mb-2">💡 Como compartilhar</p>
+        <ul className="text-xs text-dark-400 space-y-1.5">
+          <li>• Copie o link personalizado acima</li>
+          <li>• Envie pelo WhatsApp, Instagram ou e-mail</li>
+          <li>• O cliente abre no celular sem precisar baixar nada</li>
+          <li>• Funciona em qualquer dispositivo</li>
+        </ul>
+      </div>
     </div>
   )
 }
