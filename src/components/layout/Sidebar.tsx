@@ -1,9 +1,9 @@
 'use client'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import {
   LayoutDashboard, Globe, Building2, Users, BarChart3,
-  Puzzle, Settings, HelpCircle, Plus, Crown, Zap
+  Puzzle, Settings, HelpCircle, Plus, Crown, Zap, LogOut
 } from 'lucide-react'
 import { cn, daysUntil } from '@/lib/utils'
 import { useAppStore } from '@/lib/store'
@@ -22,9 +22,15 @@ const nav = [
 
 export default function Sidebar() {
   const pathname = usePathname()
-  const { user } = useAppStore()
+  const router = useRouter()
+  const { user, setUser, landingPages } = useAppStore()
   const trialDays = user?.trialEndsAt ? daysUntil(user.trialEndsAt) : 0
   const isPremium = user?.plan === 'premium'
+
+  function handleLogout() {
+    setUser(null)
+    router.push('/login')
+  }
 
   return (
     <aside className="w-[220px] flex-shrink-0 bg-dark-950 border-r border-dark-800 flex flex-col h-screen sticky top-0">
@@ -71,8 +77,28 @@ export default function Sidebar() {
         ))}
       </nav>
 
+      {/* User + logout */}
+      <div className="px-3 py-3 border-t border-dark-800">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-dark-950 font-bold text-sm flex-shrink-0">
+            {user?.name?.charAt(0) ?? 'C'}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-semibold text-white truncate">{user?.name}</p>
+            <p className="text-xs text-dark-500 truncate">{user?.email}</p>
+          </div>
+          <button
+            onClick={handleLogout}
+            title="Sair"
+            className="p-1.5 rounded-lg text-dark-500 hover:text-red-400 hover:bg-dark-800 transition-colors"
+          >
+            <LogOut className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+
       {/* Plan badge */}
-      <div className="p-4 mt-auto">
+      <div className="p-4">
         {isPremium ? (
           <div className="card-dark p-3.5">
             <div className="flex items-center gap-2 mb-2">

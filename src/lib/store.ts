@@ -38,17 +38,7 @@ interface AppStore {
 export const useAppStore = create<AppStore>()(
   persist(
     (set, get) => ({
-      user: {
-        id: 'demo-user',
-        name: 'Corretor Demo',
-        email: 'corretor@demo.com',
-        plan: 'premium',
-        trialEndsAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
-        createdAt: new Date().toISOString(),
-        creci: 'CRECI-SP 123456-F',
-        phone: '(11) 99999-9999',
-        whatsapp: '5511999999999',
-      },
+      user: null,
       setUser: (user) => set({ user }),
 
       currentLP: null,

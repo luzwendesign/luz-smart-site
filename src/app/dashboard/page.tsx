@@ -9,9 +9,9 @@ import {
 import { formatCurrency, daysUntil } from '@/lib/utils'
 
 const STATS = [
-  { label: 'Visualizações', value: '1.250', change: '+28%', icon: Eye, color: 'text-blue-400' },
-  { label: 'Leads', value: '86', change: '+35%', icon: Users, color: 'text-green-400' },
-  { label: 'Taxa de conversão', value: '6,8%', change: '+12%', icon: TrendingUp, color: 'text-brand-400' },
+  { label: 'Visualizações', value: '0', change: '—', icon: Eye, color: 'text-blue-400' },
+  { label: 'Leads', value: '0', change: '—', icon: Users, color: 'text-green-400' },
+  { label: 'Taxa de conversão', value: '0%', change: '—', icon: TrendingUp, color: 'text-brand-400' },
 ]
 
 const QUICK_ACTIONS = [
@@ -57,7 +57,7 @@ export default function DashboardPage() {
                 </div>
               </div>
               <p className="text-3xl font-black text-white mb-1">{value}</p>
-              <p className="text-green-400 text-sm font-semibold">{change} vs mês anterior</p>
+              <p className="text-dark-500 text-sm font-semibold">{change} vs mês anterior</p>
             </div>
           ))}
         </div>

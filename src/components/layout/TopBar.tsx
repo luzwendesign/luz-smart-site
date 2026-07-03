@@ -1,6 +1,7 @@
 'use client'
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Bell, ChevronDown, User, Settings, CreditCard, LogOut, CheckCircle } from 'lucide-react'
 import { useAppStore } from '@/lib/store'
 
@@ -18,8 +19,14 @@ const NOTIFICATIONS = [
 ]
 
 export default function TopBar({ title, subtitle, actions }: TopBarProps) {
-  const { user } = useAppStore()
+  const { user, setUser } = useAppStore()
+  const router = useRouter()
   const [showNotif, setShowNotif] = useState(false)
+
+  function handleLogout() {
+    setUser(null)
+    router.push('/login')
+  }
   const [showProfile, setShowProfile] = useState(false)
   const [notifications, setNotifications] = useState(NOTIFICATIONS)
   const notifRef = useRef<HTMLDivElement>(null)
@@ -145,7 +152,7 @@ export default function TopBar({ title, subtitle, actions }: TopBarProps) {
               </div>
 
               <div className="border-t border-dark-800 py-1.5">
-                <button className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-400 hover:text-red-300 hover:bg-dark-800 transition-colors">
+                <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-400 hover:text-red-300 hover:bg-dark-800 transition-colors">
                   <LogOut className="w-4 h-4" /> Sair
                 </button>
               </div>
