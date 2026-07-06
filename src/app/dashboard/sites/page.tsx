@@ -2,11 +2,12 @@
 import Link from 'next/link'
 import { useAppStore } from '@/lib/store'
 import TopBar from '@/components/layout/TopBar'
-import { Plus, ExternalLink, Edit, Trash2, Globe, CheckCircle, Eye } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { Plus, ExternalLink, Edit, Trash2, Globe, CheckCircle, Eye, Crown, Lock } from 'lucide-react'
 
 export default function SitesPage() {
-  const { landingPages, deleteLandingPage } = useAppStore()
+  const { landingPages, deleteLandingPage, user } = useAppStore()
+  const isPremium = user?.plan === 'premium'
+  const atLimit = !isPremium && landingPages.length >= 1
 
   return (
     <div className="min-h-screen bg-dark-950">
@@ -14,12 +15,46 @@ export default function SitesPage() {
         title="Meus Sites"
         subtitle={`${landingPages.length} landing page${landingPages.length !== 1 ? 's' : ''}`}
         actions={
-          <Link href="/dashboard/novo" className="btn-primary text-sm py-2.5 px-4">
-            <Plus className="w-4 h-4" /> Criar novo
-          </Link>
+          atLimit ? (
+            <a
+              href="https://mpago.la/2jcbcsh"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-primary text-sm py-2.5 px-4"
+            >
+              <Crown className="w-4 h-4" /> Fazer upgrade
+            </a>
+          ) : (
+            <Link href="/dashboard/novo" className="btn-primary text-sm py-2.5 px-4">
+              <Plus className="w-4 h-4" /> Criar novo
+            </Link>
+          )
         }
       />
-      <div className="p-6">
+
+      <div className="p-4 md:p-6">
+        {/* Aviso de limite do plano gratuito */}
+        {atLimit && (
+          <div className="mb-6 flex items-start gap-3 bg-brand-400/10 border border-brand-400/30 rounded-xl p-4">
+            <Crown className="w-5 h-5 text-brand-400 flex-shrink-0 mt-0.5" />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-brand-400">Limite do plano gratuito atingido</p>
+              <p className="text-xs text-dark-400 mt-0.5">
+                No plano gratuito você pode ter apenas <strong className="text-white">1 landing page</strong>.
+                Faça upgrade para criar sites ilimitados.
+              </p>
+            </div>
+            <a
+              href="https://mpago.la/2jcbcsh"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-primary text-xs py-2 px-3 flex-shrink-0"
+            >
+              <Crown className="w-3.5 h-3.5" /> R$ 50/mês
+            </a>
+          </div>
+        )}
+
         {landingPages.length === 0 ? (
           <div className="text-center py-24">
             <div className="w-20 h-20 rounded-3xl bg-dark-800 flex items-center justify-center mx-auto mb-6">
@@ -90,6 +125,29 @@ export default function SitesPage() {
                 </div>
               </div>
             ))}
+
+            {/* Card bloqueado — upgrade */}
+            {atLimit && (
+              <div className="card-dark p-0 overflow-hidden border-dashed border-brand-500/30 bg-brand-400/5">
+                <div className="h-44 flex flex-col items-center justify-center gap-3 p-4">
+                  <div className="w-12 h-12 rounded-2xl bg-brand-400/10 flex items-center justify-center">
+                    <Lock className="w-6 h-6 text-brand-400" />
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm font-bold text-white mb-1">Sites ilimitados</p>
+                    <p className="text-xs text-dark-400">Disponível no Premium</p>
+                  </div>
+                  <a
+                    href="https://mpago.la/2jcbcsh"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-primary text-xs py-2 px-4"
+                  >
+                    <Crown className="w-3.5 h-3.5" /> Assinar
+                  </a>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
