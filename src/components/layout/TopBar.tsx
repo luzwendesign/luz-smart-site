@@ -48,7 +48,7 @@ export default function TopBar({ title, subtitle, actions }: TopBarProps) {
   }
 
   return (
-    <header className="h-16 border-b border-dark-800 flex items-center justify-between px-6 bg-dark-950 sticky top-0 z-30">
+    <header className="h-14 md:h-16 border-b border-dark-800 items-center justify-between px-4 md:px-6 bg-dark-950 sticky top-0 z-30 hidden md:flex">
       <div>
         {title && (
           <h1 className="text-lg font-bold text-white" style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
