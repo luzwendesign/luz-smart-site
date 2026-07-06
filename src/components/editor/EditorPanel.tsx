@@ -611,10 +611,10 @@ const GOOGLE_FONTS = [
 ]
 
 const FONT_SIZES = [
-  { id: 'small',  label: 'Pequeno',  scale: '90%' },
-  { id: 'normal', label: 'Normal',   scale: '100%' },
-  { id: 'large',  label: 'Grande',   scale: '110%' },
-  { id: 'xlarge', label: 'Enorme',   scale: '120%' },
+  { id: 'small',  label: 'Pequeno',  scale: 0.9 },
+  { id: 'normal', label: 'Normal',   scale: 1.0 },
+  { id: 'large',  label: 'Grande',   scale: 1.1 },
+  { id: 'xlarge', label: 'Enorme',   scale: 1.2 },
 ]
 
 function FontsTab({ lp, updateCurrentLP }: any) {
@@ -687,7 +687,7 @@ function FontsTab({ lp, updateCurrentLP }: any) {
           const f = GOOGLE_FONTS.find((x) => x.id === currentFont) || GOOGLE_FONTS[0]
           const sz = FONT_SIZES.find((x) => x.id === currentSize) || FONT_SIZES[1]
           return (
-            <div style={{ fontFamily: f.stack, fontSize: sz.scale }}>
+            <div style={{ fontFamily: f.stack, zoom: sz.scale }}>
               <p className="text-white font-bold text-xl mb-1">Apartamento no Centro</p>
               <p className="text-dark-400 text-sm">Localização privilegiada e acabamento premium</p>
               <p className="font-bold text-lg mt-2" style={{ color: lp.primaryColor }}>R$ 620.000,00</p>

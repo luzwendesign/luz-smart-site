@@ -67,11 +67,11 @@ const FONT_URLS: Record<string, string> = {
   'dm-sans':      'DM+Sans:wght@300;400;500;600;700',
 }
 
-const FONT_SIZE_SCALE: Record<string, string> = {
-  small:  '90%',
-  normal: '100%',
-  large:  '110%',
-  xlarge: '120%',
+const FONT_SIZE_SCALE: Record<string, number> = {
+  small:  0.9,
+  normal: 1.0,
+  large:  1.1,
+  xlarge: 1.2,
 }
 
 function LandingPage({ lp, isMobile, isTablet }: { lp: any; isMobile: boolean; isTablet: boolean }) {
@@ -83,14 +83,14 @@ function LandingPage({ lp, isMobile, isTablet }: { lp: any; isMobile: boolean; i
 
   const fontStack = FONT_STACKS[fontFamily || 'plus-jakarta'] || FONT_STACKS['plus-jakarta']
   const btnRadius = RADIUS_MAP[borderRadius || 'large'] || '16px'
-  const fontScale = FONT_SIZE_SCALE[fontSize || 'normal'] || '100%'
+  const fontScale = FONT_SIZE_SCALE[fontSize || 'normal'] ?? 1.0
   const fontUrl = FONT_URLS[fontFamily || 'plus-jakarta']
 
   const style = {
     '--primary': primaryColor,
     '--accent': accentColor,
     fontFamily: fontStack,
-    fontSize: fontScale,
+    zoom: fontScale,
   } as React.CSSProperties
 
   // Derived layout flags
