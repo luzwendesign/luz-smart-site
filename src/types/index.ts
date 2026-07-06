@@ -2,6 +2,8 @@ export interface PropertyData {
   // Básico
   title: string
   description: string
+  heroHeadline?: string   // chamada principal do hero (título de impacto)
+  heroSubtitle?: string   // subtítulo/tagline do hero
   price: string
   priceFormatted: string
 

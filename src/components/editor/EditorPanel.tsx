@@ -116,7 +116,38 @@ function PropertyTab({ lp, p, toggleSection, expandedSections, updatePropertyDat
   return (
     <div className="p-4 space-y-3">
       <Section id="basic" title="Informações Gerais" expanded={expandedSections.includes('basic')} onToggle={() => toggleSection('basic')}>
-        <Field label="Título do imóvel">
+        {/* Hero — cabeçalho do site */}
+        <div className="bg-brand-400/5 border border-brand-400/20 rounded-xl p-3 mb-1 space-y-3">
+          <p className="text-xs font-semibold text-brand-400 uppercase tracking-wide">Cabeçalho do site (Hero)</p>
+          <Field label="Chamada principal">
+            <div className="relative">
+              <input
+                className="input-dark pr-10"
+                placeholder={p.title || 'Ex: Seu novo lar te espera em Pinheiros'}
+                value={p.heroHeadline || ''}
+                onChange={(e) => updatePropertyData({ heroHeadline: e.target.value })}
+              />
+              <AIButton field="title" value={p.heroHeadline || p.title} loading={aiLoading} onImprove={async (field, val) => {
+                const res = await fetch('/api/ai-improve', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ field, value: val }) })
+                const { improved } = await res.json()
+                updatePropertyData({ heroHeadline: improved })
+              }} />
+            </div>
+            <p className="text-xs text-dark-600 mt-1">Título de impacto exibido no topo da página. Se vazio, usa o título do imóvel.</p>
+          </Field>
+          <Field label="Subtítulo / Tagline">
+            <input
+              className="input-dark"
+              placeholder="Ex: Localização privilegiada com acabamento premium"
+              value={p.heroSubtitle || ''}
+              onChange={(e) => updatePropertyData({ heroSubtitle: e.target.value })}
+            />
+            <p className="text-xs text-dark-600 mt-1">Frase curta abaixo do título. Se vazio, usa trecho da descrição.</p>
+          </Field>
+        </div>
+
+        {/* Dados do imóvel */}
+        <Field label="Título interno do imóvel">
           <div className="relative">
             <input
               className="input-dark pr-10"
@@ -125,17 +156,19 @@ function PropertyTab({ lp, p, toggleSection, expandedSections, updatePropertyDat
             />
             <AIButton field="title" value={p.title} loading={aiLoading} onImprove={improveWithAI} />
           </div>
+          <p className="text-xs text-dark-600 mt-1">Usado em listas, SEO e como fallback do hero.</p>
         </Field>
-        <Field label="Descrição do imóvel">
+        <Field label="Descrição completa do imóvel">
           <div className="relative">
             <textarea
               className="input-dark resize-none"
-              rows={4}
+              rows={5}
               value={p.description}
               onChange={(e) => updatePropertyData({ description: e.target.value })}
             />
             <AIButton field="description" value={p.description} loading={aiLoading} onImprove={improveWithAI} bottom />
           </div>
+          <p className="text-xs text-dark-600 mt-1">Texto completo exibido na seção "Sobre o Imóvel".</p>
         </Field>
         <div className="grid grid-cols-2 gap-3">
           <Field label="Preço do imóvel">

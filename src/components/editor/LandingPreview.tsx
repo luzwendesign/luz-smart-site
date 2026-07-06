@@ -153,7 +153,7 @@ function LandingPage({ lp, isMobile, isTablet }: { lp: any; isMobile: boolean; i
                   <MapPin className="w-3 h-3 flex-shrink-0" style={{ color: accentColor }} />
                   <span className="truncate">{p.neighborhood} · {p.city}</span>
                 </div>
-                <h1 className="text-2xl font-black text-white leading-tight">{p.title}</h1>
+                <h1 className="text-2xl font-black text-white leading-tight">{p.heroHeadline || p.title}</h1>
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-white/60 text-xs mb-0.5">Valor</p>
@@ -221,8 +221,8 @@ function LandingPage({ lp, isMobile, isTablet }: { lp: any; isMobile: boolean; i
                       <MapPin className="w-3.5 h-3.5" style={{ color: accentColor }} />
                       {p.neighborhood} · {p.city}, {p.state}
                     </div>
-                    <h1 className={`${heroTitleSize} font-black text-white leading-tight mb-4`}>{p.title}</h1>
-                    <p className="text-white/80 text-base mb-6 leading-relaxed max-w-lg">{p.description.substring(0, 150)}...</p>
+                    <h1 className={`${heroTitleSize} font-black text-white leading-tight mb-4`}>{p.heroHeadline || p.title}</h1>
+                    <p className="text-white/80 text-base mb-6 leading-relaxed max-w-lg">{p.heroSubtitle || p.description.substring(0, 150) + '...'}</p>
                     <div className="mb-6">
                       <p className="text-white/60 text-sm mb-1">Valor</p>
                       <p className="text-4xl font-black" style={{ color: accentColor }}>{p.priceFormatted}</p>
