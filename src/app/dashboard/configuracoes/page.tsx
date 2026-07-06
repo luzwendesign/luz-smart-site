@@ -1,11 +1,13 @@
 'use client'
 import TopBar from '@/components/layout/TopBar'
 import { useAppStore } from '@/lib/store'
-import { Save, User, Bell, Shield, CreditCard, Eye, EyeOff, Check, X } from 'lucide-react'
+import { Save, User, Bell, Shield, CreditCard, Eye, EyeOff, Check, X, Globe, Crown, Lock, Copy, CheckCircle, ExternalLink } from 'lucide-react'
 import { useState } from 'react'
 
 export default function ConfiguracoesPage() {
   const { user, setUser } = useAppStore()
+  const isPremium = user?.plan === 'premium'
+
   const [name, setName] = useState(user?.name || '')
   const [email, setEmail] = useState(user?.email || '')
   const [phone, setPhone] = useState(user?.phone || '')
@@ -21,6 +23,11 @@ export default function ConfiguracoesPage() {
   const [passwordSaved, setPasswordSaved] = useState(false)
   const [passwordError, setPasswordError] = useState('')
 
+  // Domínio
+  const [customDomain, setCustomDomain] = useState('')
+  const [domainSaved, setDomainSaved] = useState(false)
+  const [copiedDns, setCopiedDns] = useState(false)
+
   const [notifs, setNotifs] = useState({
     newLead: true,
     weeklyReport: true,
@@ -32,6 +39,7 @@ export default function ConfiguracoesPage() {
 
   const tabs = [
     { id: 'profile', label: 'Perfil', icon: User },
+    { id: 'domain', label: 'Domínio', icon: Globe },
     { id: 'notifications', label: 'Notificações', icon: Bell },
     { id: 'security', label: 'Segurança', icon: Shield },
     { id: 'billing', label: 'Plano & Pagamento', icon: CreditCard },
@@ -54,14 +62,25 @@ export default function ConfiguracoesPage() {
     setTimeout(() => setPasswordSaved(false), 2500)
   }
 
+  function handleSaveDomain() {
+    setDomainSaved(true)
+    setTimeout(() => setDomainSaved(false), 2500)
+  }
+
+  function copyDns(text: string) {
+    navigator.clipboard.writeText(text)
+    setCopiedDns(true)
+    setTimeout(() => setCopiedDns(false), 2000)
+  }
+
   const BILLING_FEATURES = [
-    'Páginas ilimitadas',
+    'Sites ilimitados',
+    'Domínio personalizado',
     'Suporte prioritário',
     'Pixel Meta e GA4',
     'Google Tag Manager',
     'Exportar leads CSV',
     'SEO avançado',
-    'Scripts personalizados',
   ]
 
   const NOTIF_OPTIONS = [
@@ -76,19 +95,20 @@ export default function ConfiguracoesPage() {
   return (
     <div className="min-h-screen bg-dark-950">
       <TopBar title="Configurações" />
-      <div className="p-6">
-        <div className="flex gap-6">
+      <div className="p-4 md:p-6">
+        <div className="flex flex-col md:flex-row gap-6">
           {/* Tabs */}
-          <div className="w-52 flex-shrink-0">
-            <nav className="space-y-1">
+          <div className="md:w-52 flex-shrink-0">
+            <nav className="flex md:flex-col gap-1 overflow-x-auto md:overflow-visible pb-1 md:pb-0">
               {tabs.map(({ id, label, icon: Icon }) => (
                 <button
                   key={id}
                   onClick={() => setActiveTab(id)}
-                  className={`nav-item w-full ${activeTab === id ? 'active' : ''}`}
+                  className={`nav-item flex-shrink-0 md:w-full ${activeTab === id ? 'active' : ''}`}
                 >
-                  <Icon className="w-4 h-4" />
-                  {label}
+                  <Icon className="w-4 h-4 flex-shrink-0" />
+                  <span className="whitespace-nowrap">{label}</span>
+                  {id === 'domain' && !isPremium && <Crown className="w-3 h-3 text-brand-400 ml-auto" />}
                 </button>
               ))}
             </nav>
@@ -110,7 +130,7 @@ export default function ConfiguracoesPage() {
                     <p className="text-dark-500 text-xs mt-1">JPG ou PNG. Máx. 5MB.</p>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="text-xs font-medium text-dark-400 block mb-1.5">Nome completo</label>
                     <input className="input-dark" value={name} onChange={(e) => setName(e.target.value)} />
@@ -131,6 +151,126 @@ export default function ConfiguracoesPage() {
                 <button onClick={handleSaveProfile} className="btn-primary text-sm py-2.5">
                   {saved ? <><Check className="w-4 h-4" /> Salvo!</> : <><Save className="w-4 h-4" /> Salvar alterações</>}
                 </button>
+              </div>
+            )}
+
+            {/* DOMÍNIO */}
+            {activeTab === 'domain' && (
+              <div className="space-y-4">
+                {!isPremium ? (
+                  /* Bloqueado — plano gratuito */
+                  <div className="card-dark text-center py-10 px-6">
+                    <div className="w-16 h-16 rounded-2xl bg-brand-400/10 flex items-center justify-center mx-auto mb-4">
+                      <Lock className="w-8 h-8 text-brand-400" />
+                    </div>
+                    <h3 className="text-lg font-bold text-white mb-2">Domínio personalizado</h3>
+                    <p className="text-dark-400 text-sm mb-6 max-w-sm mx-auto">
+                      Conecte um domínio próprio às suas landing pages, como{' '}
+                      <span className="text-white font-medium">imoveis.suaempresa.com.br</span>.
+                      Disponível apenas no plano Premium.
+                    </p>
+                    <a
+                      href="https://mpago.la/2jcbcsh"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-primary inline-flex py-3 px-6"
+                    >
+                      <Crown className="w-4 h-4" /> Assinar Premium — R$ 50/mês
+                    </a>
+                    <div className="mt-6 pt-6 border-t border-dark-800 grid grid-cols-2 gap-2 text-left max-w-xs mx-auto">
+                      {['Sites ilimitados', 'Domínio personalizado', 'Pixel Meta & Analytics', 'Exportar leads CSV'].map((f) => (
+                        <div key={f} className="flex items-center gap-2 text-xs text-dark-300">
+                          <span className="text-brand-400">✓</span> {f}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  /* Premium — configuração de domínio */
+                  <>
+                    <div className="card-dark space-y-5">
+                      <div>
+                        <h3 className="font-bold text-white mb-1">Domínio personalizado</h3>
+                        <p className="text-dark-400 text-sm">
+                          Conecte um domínio ou subdomínio próprio. Ex: <span className="text-white">imoveis.suaempresa.com.br</span>
+                        </p>
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-medium text-dark-400 block mb-1.5">Seu domínio</label>
+                        <div className="flex gap-2">
+                          <input
+                            className="input-dark flex-1"
+                            value={customDomain}
+                            onChange={(e) => setCustomDomain(e.target.value.toLowerCase().trim())}
+                            placeholder="imoveis.suaempresa.com.br"
+                          />
+                          <button onClick={handleSaveDomain} className="btn-primary px-4 flex-shrink-0">
+                            {domainSaved ? <CheckCircle className="w-4 h-4" /> : <Save className="w-4 h-4" />}
+                          </button>
+                        </div>
+                        <p className="text-xs text-dark-500 mt-1.5">
+                          Use um subdomínio (ex: <code className="text-dark-300">imoveis.</code>) para não afetar seu site principal.
+                        </p>
+                      </div>
+
+                      {customDomain && (
+                        <div className="bg-dark-800 rounded-xl p-4 space-y-3">
+                          <p className="text-xs font-semibold text-white">Configure o DNS do seu domínio:</p>
+                          <div className="space-y-2">
+                            {[
+                              { type: 'CNAME', name: customDomain.split('.')[0] || '@', value: 'cname.vercel-dns.com' },
+                            ].map((record) => (
+                              <div key={record.type} className="flex items-center gap-2 bg-dark-900 rounded-lg p-3">
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-2 flex-wrap">
+                                    <span className="text-xs font-bold text-brand-400 bg-brand-400/10 px-2 py-0.5 rounded">{record.type}</span>
+                                    <span className="text-xs text-dark-300 font-mono">{record.name}</span>
+                                    <span className="text-xs text-dark-500">→</span>
+                                    <span className="text-xs text-white font-mono truncate">{record.value}</span>
+                                  </div>
+                                </div>
+                                <button
+                                  onClick={() => copyDns(record.value)}
+                                  className="p-1.5 rounded-lg text-dark-500 hover:text-white hover:bg-dark-700 transition-colors flex-shrink-0"
+                                  title="Copiar"
+                                >
+                                  {copiedDns ? <CheckCircle className="w-3.5 h-3.5 text-green-400" /> : <Copy className="w-3.5 h-3.5" />}
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                          <p className="text-xs text-dark-500">
+                            Após salvar o DNS, a propagação pode levar até 24h. Acesse{' '}
+                            <a href="https://dnschecker.org" target="_blank" rel="noopener noreferrer" className="text-brand-400 hover:underline">
+                              dnschecker.org
+                            </a>{' '}
+                            para verificar.
+                          </p>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="card-dark">
+                      <h3 className="font-bold text-white mb-3">Como funciona</h3>
+                      <ol className="space-y-3">
+                        {[
+                          'Digite o domínio ou subdomínio que deseja usar',
+                          'Copie o registro CNAME e configure no painel do seu provedor de domínio (Registro.br, GoDaddy, etc.)',
+                          'Aguarde a propagação do DNS (até 24h)',
+                          'Todas as suas landing pages estarão disponíveis no seu domínio',
+                        ].map((step, i) => (
+                          <li key={i} className="flex items-start gap-3 text-sm text-dark-300">
+                            <span className="w-6 h-6 rounded-full bg-brand-400/20 text-brand-400 font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">
+                              {i + 1}
+                            </span>
+                            {step}
+                          </li>
+                        ))}
+                      </ol>
+                    </div>
+                  </>
+                )}
               </div>
             )}
 
@@ -166,7 +306,6 @@ export default function ConfiguracoesPage() {
             {/* SEGURANÇA */}
             {activeTab === 'security' && (
               <div className="space-y-4">
-                {/* Alterar senha */}
                 <div className="card-dark space-y-4">
                   <div>
                     <h3 className="font-bold text-white mb-1">Alterar senha</h3>
@@ -176,13 +315,7 @@ export default function ConfiguracoesPage() {
                   <div>
                     <label className="text-xs font-medium text-dark-400 block mb-1.5">Senha atual</label>
                     <div className="relative">
-                      <input
-                        type={showCurrent ? 'text' : 'password'}
-                        className="input-dark pr-10"
-                        value={currentPassword}
-                        onChange={(e) => setCurrentPassword(e.target.value)}
-                        placeholder="••••••••"
-                      />
+                      <input type={showCurrent ? 'text' : 'password'} className="input-dark pr-10" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} placeholder="••••••••" />
                       <button onClick={() => setShowCurrent(!showCurrent)} className="absolute right-3 top-1/2 -translate-y-1/2 text-dark-500 hover:text-dark-300">
                         {showCurrent ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
@@ -192,13 +325,7 @@ export default function ConfiguracoesPage() {
                   <div>
                     <label className="text-xs font-medium text-dark-400 block mb-1.5">Nova senha</label>
                     <div className="relative">
-                      <input
-                        type={showNew ? 'text' : 'password'}
-                        className="input-dark pr-10"
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                        placeholder="••••••••"
-                      />
+                      <input type={showNew ? 'text' : 'password'} className="input-dark pr-10" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="••••••••" />
                       <button onClick={() => setShowNew(!showNew)} className="absolute right-3 top-1/2 -translate-y-1/2 text-dark-500 hover:text-dark-300">
                         {showNew ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
@@ -207,8 +334,7 @@ export default function ConfiguracoesPage() {
                       <div className="mt-2 flex items-center gap-1.5 text-xs">
                         {newPassword.length >= 8
                           ? <><Check className="w-3 h-3 text-green-400" /><span className="text-green-400">Tamanho adequado</span></>
-                          : <><X className="w-3 h-3 text-red-400" /><span className="text-red-400">Mínimo 8 caracteres</span></>
-                        }
+                          : <><X className="w-3 h-3 text-red-400" /><span className="text-red-400">Mínimo 8 caracteres</span></>}
                       </div>
                     )}
                   </div>
@@ -216,13 +342,7 @@ export default function ConfiguracoesPage() {
                   <div>
                     <label className="text-xs font-medium text-dark-400 block mb-1.5">Confirmar nova senha</label>
                     <div className="relative">
-                      <input
-                        type={showConfirm ? 'text' : 'password'}
-                        className="input-dark pr-10"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        placeholder="••••••••"
-                      />
+                      <input type={showConfirm ? 'text' : 'password'} className="input-dark pr-10" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="••••••••" />
                       <button onClick={() => setShowConfirm(!showConfirm)} className="absolute right-3 top-1/2 -translate-y-1/2 text-dark-500 hover:text-dark-300">
                         {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
@@ -231,8 +351,7 @@ export default function ConfiguracoesPage() {
                       <div className="mt-2 flex items-center gap-1.5 text-xs">
                         {newPassword === confirmPassword
                           ? <><Check className="w-3 h-3 text-green-400" /><span className="text-green-400">Senhas coincidem</span></>
-                          : <><X className="w-3 h-3 text-red-400" /><span className="text-red-400">Senhas não coincidem</span></>
-                        }
+                          : <><X className="w-3 h-3 text-red-400" /><span className="text-red-400">Senhas não coincidem</span></>}
                       </div>
                     )}
                   </div>
@@ -248,7 +367,6 @@ export default function ConfiguracoesPage() {
                   </button>
                 </div>
 
-                {/* Sessões ativas */}
                 <div className="card-dark">
                   <h3 className="font-bold text-white mb-4">Sessões ativas</h3>
                   <div className="space-y-3">
@@ -261,22 +379,9 @@ export default function ConfiguracoesPage() {
                           <p className="text-sm font-medium text-white">{device}</p>
                           <p className="text-xs text-dark-500">{location} {current && <span className="text-green-400 ml-1">• Sessão atual</span>}</p>
                         </div>
-                        {!current && (
-                          <button className="text-xs text-red-400 hover:text-red-300 font-medium">Encerrar</button>
-                        )}
+                        {!current && <button className="text-xs text-red-400 hover:text-red-300 font-medium">Encerrar</button>}
                       </div>
                     ))}
-                  </div>
-                </div>
-
-                {/* 2FA */}
-                <div className="card-dark">
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <h3 className="font-bold text-white mb-1">Autenticação em dois fatores</h3>
-                      <p className="text-dark-400 text-sm">Adicione uma camada extra de segurança à sua conta.</p>
-                    </div>
-                    <button className="btn-secondary text-sm py-2 px-4 flex-shrink-0">Ativar</button>
                   </div>
                 </div>
               </div>
@@ -288,37 +393,33 @@ export default function ConfiguracoesPage() {
                 <div className="card-dark border-brand-500/30">
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <h3 className="font-bold text-white">Plano Premium</h3>
-                      <p className="text-dark-400 text-sm">R$ 50,00/mês</p>
+                      <h3 className="font-bold text-white">{isPremium ? 'Plano Premium' : 'Plano Gratuito'}</h3>
+                      <p className="text-dark-400 text-sm">{isPremium ? 'R$ 50,00/mês' : 'Trial — 3 dias restantes'}</p>
                     </div>
-                    <span className="badge-premium">Ativo</span>
+                    {isPremium
+                      ? <span className="text-xs font-bold text-brand-400 bg-brand-400/10 border border-brand-400/20 px-3 py-1 rounded-full">Premium</span>
+                      : <span className="text-xs font-bold text-dark-400 bg-dark-700 px-3 py-1 rounded-full">Gratuito</span>
+                    }
                   </div>
                   <div className="space-y-2 text-sm text-dark-300 mb-4">
                     {BILLING_FEATURES.map((f) => (
                       <p key={f} className="flex items-center gap-2">
-                        <span className="text-brand-400">✓</span> {f}
+                        <span className={isPremium ? 'text-brand-400' : 'text-dark-600'}>✓</span> {f}
                       </p>
                     ))}
                   </div>
-                  <button className="btn-secondary w-full justify-center text-sm py-2.5">
-                    Gerenciar assinatura
-                  </button>
-                </div>
-
-                <div className="card-dark">
-                  <h3 className="font-bold text-white mb-4">Histórico de pagamentos</h3>
-                  <div className="space-y-2">
-                    {[
-                      { date: '01/07/2026', value: 'R$ 50,00', status: 'Pago' },
-                      { date: '01/06/2026', value: 'R$ 50,00', status: 'Pago' },
-                    ].map(({ date, value, status }) => (
-                      <div key={date} className="flex items-center justify-between py-2.5 border-b border-dark-800 last:border-0">
-                        <p className="text-sm text-dark-300">{date}</p>
-                        <p className="text-sm font-medium text-white">{value}</p>
-                        <span className="text-xs text-green-400 bg-green-400/10 px-2.5 py-1 rounded-full font-semibold">{status}</span>
-                      </div>
-                    ))}
-                  </div>
+                  {isPremium ? (
+                    <button className="btn-secondary w-full justify-center text-sm py-2.5">Gerenciar assinatura</button>
+                  ) : (
+                    <a
+                      href="https://mpago.la/2jcbcsh"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-primary w-full justify-center text-sm py-2.5 flex items-center gap-2"
+                    >
+                      <Crown className="w-4 h-4" /> Assinar Premium — R$ 50/mês
+                    </a>
+                  )}
                 </div>
               </div>
             )}
