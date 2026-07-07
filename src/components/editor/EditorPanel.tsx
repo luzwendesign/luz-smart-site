@@ -127,7 +127,7 @@ function PropertyTab({ lp, p, toggleSection, expandedSections, updatePropertyDat
                 value={p.heroHeadline || ''}
                 onChange={(e) => updatePropertyData({ heroHeadline: e.target.value })}
               />
-              <AIButton field="title" value={p.heroHeadline || p.title} loading={aiLoading} onImprove={async (field, val) => {
+              <AIButton field="title" value={p.heroHeadline || p.title} loading={aiLoading} onImprove={async (field: string, val: string) => {
                 const res = await fetch('/api/ai-improve', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ field, value: val }) })
                 const { improved } = await res.json()
                 updatePropertyData({ heroHeadline: improved })
