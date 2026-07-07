@@ -72,6 +72,16 @@ export default function SlugPage() {
       }, 100)
       return () => clearInterval(interval)
     }
+
+    // Re-read when tab gains focus (user edited in another tab)
+    const handleVisibility = () => { if (document.visibilityState === 'visible') loadFromStorage() }
+    const handleFocus = () => loadFromStorage()
+    document.addEventListener('visibilitychange', handleVisibility)
+    window.addEventListener('focus', handleFocus)
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibility)
+      window.removeEventListener('focus', handleFocus)
+    }
   }, [params.slug])
 
   if (loading) {

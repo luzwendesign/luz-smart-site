@@ -91,9 +91,9 @@ export default function UrlExtractor() {
       setCurrentStep(3)
 
       if (result.partial) {
-        toast('Página criada! Alguns dados precisam de revisão — confira no editor.', {
+        toast('O portal bloqueou a leitura automática. Preencha título, preço e cidade no editor.', {
           icon: '⚠️',
-          duration: 5000,
+          duration: 8000,
           style: { background: '#1e293b', color: '#e2e8f0', border: '1px solid #f59e0b44' },
         })
       } else {

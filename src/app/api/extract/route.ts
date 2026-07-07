@@ -54,6 +54,20 @@ async function fetchHtml(url: string): Promise<string> {
   }
 }
 
+async function fetchHtmlViaProxy(url: string): Promise<string> {
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), 20000)
+  try {
+    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`
+    const res = await fetch(proxyUrl, { signal: controller.signal })
+    if (!res.ok) throw new Error(`Proxy HTTP ${res.status}`)
+    const data = await res.json() as { contents?: string }
+    return data.contents || ''
+  } finally {
+    clearTimeout(timeout)
+  }
+}
+
 // Filtra URLs que parecem ser fotos de imóveis (não logos, ícones, etc.)
 function isPropertyImage(src: string): boolean {
   if (!src || !src.startsWith('http')) return false
@@ -472,6 +486,17 @@ function scrapeGeneric(html: string, url: string): Partial<PropertyData> {
   return result
 }
 
+function parseHtml(html: string, url: string): Partial<PropertyData> {
+  if (url.includes('quintoandar')) return scrapeQuintoAndar(html)
+  if (url.includes('zapimoveis') || url.includes('vivareal')) return scrapeZapVivaReal(html)
+  if (url.includes('olx.com.br')) return scrapeOlx(html)
+  return scrapeGeneric(html, url)
+}
+
+function isGoodExtraction(scraped: Partial<PropertyData>): boolean {
+  return !!(scraped.title && scraped.priceFormatted && scraped.priceFormatted !== 'Consulte o preço')
+}
+
 export async function POST(req: NextRequest) {
   try {
     const { url } = await req.json()
@@ -483,69 +508,92 @@ export async function POST(req: NextRequest) {
     let scraped: Partial<PropertyData> = {}
     let partial = true
 
+    // 1ª tentativa: fetch direto
     try {
       const html = await fetchHtml(url)
-
-      // Escolhe o parser mais específico para o portal
-      if (url.includes('quintoandar')) {
-        scraped = scrapeQuintoAndar(html)
-      } else if (url.includes('zapimoveis') || url.includes('vivareal')) {
-        scraped = scrapeZapVivaReal(html)
-      } else if (url.includes('olx.com.br')) {
-        scraped = scrapeOlx(html)
-      } else {
-        scraped = scrapeGeneric(html, url)
-      }
-
-      // Considera extração bem-sucedida se título E preço foram encontrados
-      if (scraped.title && scraped.priceFormatted && scraped.priceFormatted !== 'Consulte o preço') {
-        partial = false
-      }
-
+      scraped = parseHtml(html, url)
+      if (isGoodExtraction(scraped)) partial = false
     } catch (e) {
-      console.warn('Scraping failed, using demo data:', e)
+      console.warn('Direct fetch failed:', e)
     }
 
-    // Remove campos vazios / zero do scraped para não sobrescrever o demo com nada
+    // 2ª tentativa: proxy CORS (contorna bloqueio de IP de portais)
+    if (partial) {
+      try {
+        const html = await fetchHtmlViaProxy(url)
+        if (html.length > 1000) {
+          const proxied = parseHtml(html, url)
+          // Merge: mantém o que já foi extraído + complementa com o proxy
+          scraped = { ...scraped, ...proxied }
+          if (isGoodExtraction(scraped)) partial = false
+        }
+      } catch (e) {
+        console.warn('Proxy fetch failed:', e)
+      }
+    }
+
+    // Remove campos vazios / zero do scraped
     const cleanedScraped = Object.fromEntries(
       Object.entries(scraped).filter(([, v]) => {
         if (v === undefined || v === null || v === '') return false
-        if (typeof v === 'number' && v === 0 && scraped.bedrooms !== 0) return false
         if (Array.isArray(v) && v.length === 0) return false
         return true
       })
     )
-
-    // bedrooms=0 é válido (studio), garantir que não seja removido
     if (scraped.bedrooms === 0) cleanedScraped.bedrooms = 0
 
-    // Merge: dados reais sobrescrevem o demo
+    // Campos de contato do DEMO (nunca aparecem em portais, o corretor precisa preencher)
+    const contactDefaults = {
+      phone: DEMO_PROPERTY.phone,
+      whatsapp: DEMO_PROPERTY.whatsapp,
+      email: DEMO_PROPERTY.email,
+      agentName: DEMO_PROPERTY.agentName,
+      agencyName: cleanedScraped.agencyName || detectPortal(url),
+      agentCRECI: DEMO_PROPERTY.agentCRECI,
+    }
+
+    // Campos do imóvel: usa dados reais se extraídos, senão placeholder vazio (não usa DEMO)
+    const propertyDefaults: Partial<PropertyData> = partial ? {
+      title: cleanedScraped.title || '',
+      description: cleanedScraped.description || '',
+      price: cleanedScraped.price || '',
+      priceFormatted: cleanedScraped.priceFormatted || 'Consulte o preço',
+      area: cleanedScraped.area || '0',
+      bedrooms: cleanedScraped.bedrooms ?? 0,
+      suites: cleanedScraped.suites ?? 0,
+      bathrooms: cleanedScraped.bathrooms ?? 1,
+      parking: cleanedScraped.parking ?? 0,
+      city: cleanedScraped.city || '',
+      state: cleanedScraped.state || '',
+      neighborhood: cleanedScraped.neighborhood || '',
+      address: cleanedScraped.address || '',
+      zipCode: cleanedScraped.zipCode || '',
+      images: cleanedScraped.images || [],
+      features: cleanedScraped.features || [],
+      highlights: cleanedScraped.highlights || DEMO_PROPERTY.highlights,
+      propertyType: cleanedScraped.propertyType || 'Apartamento',
+    } : cleanedScraped
+
     const extracted: PropertyData = {
       ...DEMO_PROPERTY,
+      ...propertyDefaults,
+      ...contactDefaults,
       ...cleanedScraped,
       sourceUrl: url,
       extractedAt: new Date().toISOString(),
     }
 
-    // Garante que priceFormatted exista
     if (!extracted.priceFormatted && extracted.price) {
       const n = toNum(extracted.price)
       if (n > 0) extracted.priceFormatted = formatPrice(n)
     }
 
-    // Garante listingType
     if (!extracted.listingType) {
       const urlLower = url.toLowerCase()
       extracted.listingType = urlLower.includes('aluguel') || urlLower.includes('locar') ? 'aluguel' : 'venda'
     }
 
-    const result: ExtractionResult = {
-      success: true,
-      data: extracted,
-      partial,
-    }
-
-    return NextResponse.json(result)
+    return NextResponse.json({ success: true, data: extracted, partial } as ExtractionResult)
 
   } catch (error) {
     console.error('Extraction error:', error)
