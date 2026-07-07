@@ -16,6 +16,7 @@ interface AppStore {
 
   // All user's LPs
   landingPages: LandingPageConfig[]
+  totalLPsCreated: number
   addLandingPage: (lp: LandingPageConfig) => void
   updateLandingPage: (id: string, patch: Partial<LandingPageConfig>) => void
   deleteLandingPage: (id: string) => void
@@ -56,7 +57,8 @@ export const useAppStore = create<AppStore>()(
         })),
 
       landingPages: [],
-      addLandingPage: (lp) => set((s) => ({ landingPages: [lp, ...s.landingPages] })),
+      totalLPsCreated: 0,
+      addLandingPage: (lp) => set((s) => ({ landingPages: [lp, ...s.landingPages], totalLPsCreated: s.totalLPsCreated + 1 })),
       updateLandingPage: (id, patch) =>
         set((s) => ({
           landingPages: s.landingPages.map((lp) =>
@@ -80,7 +82,7 @@ export const useAppStore = create<AppStore>()(
     }),
     {
       name: 'luz-smart-site',
-      version: 3,
+      version: 4,
       migrate: (persisted: any, version: number) => {
         // Ensure all LPs have the new sections and fields added in v2/v3
         const REQUIRED_SECTIONS = [
@@ -103,12 +105,17 @@ export const useAppStore = create<AppStore>()(
         const state = persisted as any
         if (state.landingPages) state.landingPages = state.landingPages.map(migrateLp)
         if (state.currentLP) state.currentLP = migrateLp(state.currentLP)
+        // v4: inicializa totalLPsCreated baseado nos LPs existentes
+        if (state.totalLPsCreated === undefined) {
+          state.totalLPsCreated = state.landingPages?.length || 0
+        }
         return state
       },
       partialize: (s) => ({
         user: s.user,
         landingPages: s.landingPages,
         currentLP: s.currentLP,
+        totalLPsCreated: s.totalLPsCreated,
       }),
     }
   )

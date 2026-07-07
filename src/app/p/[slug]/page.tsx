@@ -73,14 +73,17 @@ export default function SlugPage() {
       return () => clearInterval(interval)
     }
 
-    // Re-read when tab gains focus (user edited in another tab)
+    // Re-read when editor (another tab) updates localStorage
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === 'luz-smart-site') loadFromStorage()
+    }
+    // Re-read when user switches back to this tab
     const handleVisibility = () => { if (document.visibilityState === 'visible') loadFromStorage() }
-    const handleFocus = () => loadFromStorage()
+    window.addEventListener('storage', handleStorage)
     document.addEventListener('visibilitychange', handleVisibility)
-    window.addEventListener('focus', handleFocus)
     return () => {
+      window.removeEventListener('storage', handleStorage)
       document.removeEventListener('visibilitychange', handleVisibility)
-      window.removeEventListener('focus', handleFocus)
     }
   }, [params.slug])
 

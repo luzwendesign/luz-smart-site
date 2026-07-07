@@ -146,9 +146,9 @@ function SiteCard({ lp, isPremium, onDelete, updateLP }: { lp: any; isPremium: b
 }
 
 export default function SitesPage() {
-  const { landingPages, deleteLandingPage, updateLandingPage, user } = useAppStore()
+  const { landingPages, deleteLandingPage, updateLandingPage, user, totalLPsCreated } = useAppStore()
   const isPremium = user?.plan === 'premium'
-  const atLimit = !isPremium && landingPages.length >= 1
+  const atLimit = !isPremium && totalLPsCreated >= 1
 
   return (
     <div className="min-h-screen bg-dark-950">

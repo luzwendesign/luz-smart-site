@@ -4,9 +4,9 @@ import UrlExtractor from '@/components/generator/UrlExtractor'
 import { Crown, Lock } from 'lucide-react'
 
 export default function NovoPage() {
-  const { user, landingPages } = useAppStore()
+  const { user, totalLPsCreated } = useAppStore()
   const isPremium = user?.plan === 'premium'
-  const atLimit = !isPremium && landingPages.length >= 1
+  const atLimit = !isPremium && totalLPsCreated >= 1
 
   if (atLimit) {
     return (

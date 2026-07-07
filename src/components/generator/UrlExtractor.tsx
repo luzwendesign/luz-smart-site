@@ -29,7 +29,7 @@ const STEPS = [
 
 export default function UrlExtractor() {
   const router = useRouter()
-  const { user, landingPages, setCurrentLP, addLandingPage, setCurrentStep } = useAppStore()
+  const { user, totalLPsCreated, setCurrentLP, addLandingPage, setCurrentStep } = useAppStore()
   const [url, setUrl] = useState('')
   const [loading, setLoading] = useState(false)
   const [progress, setProgress] = useState(0)
@@ -46,8 +46,8 @@ export default function UrlExtractor() {
       return
     }
 
-    // Limite do plano gratuito: 1 landing page
-    if (user?.plan !== 'premium' && landingPages.length >= 1) {
+    // Limite do plano gratuito: 1 landing page (mesmo após excluir)
+    if (user?.plan !== 'premium' && totalLPsCreated >= 1) {
       setError('Você atingiu o limite do plano gratuito (1 landing page). Faça upgrade para o plano Premium para criar páginas ilimitadas.')
       return
     }
@@ -132,7 +132,7 @@ export default function UrlExtractor() {
         </div>
 
         {/* Limite gratuito atingido */}
-        {user?.plan !== 'premium' && landingPages.length >= 1 && (
+        {user?.plan !== 'premium' && totalLPsCreated >= 1 && (
           <div className="glass rounded-2xl p-6 mb-6 border border-brand-400/30 bg-brand-400/5">
             <div className="flex items-start gap-4">
               <Crown className="w-8 h-8 text-brand-400 flex-shrink-0 mt-0.5" />
