@@ -568,7 +568,7 @@ export async function POST(req: NextRequest) {
       neighborhood: cleanedScraped.neighborhood || '',
       address: cleanedScraped.address || '',
       zipCode: cleanedScraped.zipCode || '',
-      images: cleanedScraped.images?.length ? cleanedScraped.images : DEMO_PROPERTY.images,
+      images: (Array.isArray(cleanedScraped.images) && cleanedScraped.images.length > 0) ? cleanedScraped.images as string[] : DEMO_PROPERTY.images,
       features: cleanedScraped.features || [],
       highlights: cleanedScraped.highlights || DEMO_PROPERTY.highlights,
       propertyType: cleanedScraped.propertyType || 'Apartamento',
