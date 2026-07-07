@@ -4,8 +4,9 @@ import { useAppStore } from '@/lib/store'
 import TopBar from '@/components/layout/TopBar'
 import {
   Plus, Globe, Eye, Users, TrendingUp, ArrowRight,
-  BarChart3, ExternalLink, CheckCircle, Crown, Zap
+  BarChart3, ExternalLink, CheckCircle, Crown, Zap, Copy, Share2
 } from 'lucide-react'
+import { useState } from 'react'
 import { formatCurrency, daysUntil } from '@/lib/utils'
 
 const STATS = [
@@ -20,6 +21,32 @@ const QUICK_ACTIONS = [
   { label: 'Gerenciar leads', href: '/dashboard/leads', icon: Users, primary: false },
   { label: 'Estatísticas', href: '/dashboard/estatisticas', icon: BarChart3, primary: false },
 ]
+
+function CopyLink({ lp, isPremium }: { lp: any; isPremium: boolean }) {
+  const [copied, setCopied] = useState(false)
+  const slug = lp.customSlug || lp.id
+  const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://luz-smart-site.vercel.app'
+  const url = `${baseUrl}/p/${slug}`
+
+  function copy() {
+    navigator.clipboard.writeText(url)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  return (
+    <div className="mt-2 flex items-center gap-1.5 bg-dark-800 rounded-lg px-2.5 py-1.5">
+      <Globe className="w-3 h-3 text-dark-500 flex-shrink-0" />
+      <span className="text-xs text-dark-400 truncate flex-1 font-mono">/p/{slug.length > 16 ? slug.slice(0, 16) + '…' : slug}</span>
+      <button onClick={copy} className="text-dark-500 hover:text-brand-400 transition-colors flex-shrink-0" title="Copiar link">
+        {copied ? <CheckCircle className="w-3.5 h-3.5 text-green-400" /> : <Copy className="w-3.5 h-3.5" />}
+      </button>
+      <a href={url} target="_blank" rel="noopener noreferrer" className="text-dark-500 hover:text-brand-400 transition-colors flex-shrink-0" title="Abrir site">
+        <ExternalLink className="w-3.5 h-3.5" />
+      </a>
+    </div>
+  )
+}
 
 export default function DashboardPage() {
   const { user, landingPages } = useAppStore()
@@ -129,8 +156,9 @@ export default function DashboardPage() {
 
                   <div className="p-4">
                     <h3 className="font-bold text-white text-sm mb-1 truncate">{lp.propertyData.title}</h3>
-                    <p className="text-dark-400 text-xs mb-3">{lp.propertyData.city} · {lp.propertyData.priceFormatted}</p>
-                    <div className="flex gap-2">
+                    <p className="text-dark-400 text-xs mb-2">{lp.propertyData.city} · {lp.propertyData.priceFormatted}</p>
+                    <CopyLink lp={lp} isPremium={user?.plan === 'premium'} />
+                    <div className="flex gap-2 mt-2">
                       <Link
                         href={`/dashboard/editor/${lp.id}`}
                         className="flex-1 text-center py-2 text-xs font-semibold bg-dark-700 hover:bg-dark-600 text-white rounded-lg transition-colors"
