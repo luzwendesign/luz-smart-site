@@ -548,7 +548,7 @@ export async function POST(req: NextRequest) {
       whatsapp: DEMO_PROPERTY.whatsapp,
       email: DEMO_PROPERTY.email,
       agentName: DEMO_PROPERTY.agentName,
-      agencyName: cleanedScraped.agencyName || detectPortal(url),
+      agencyName: String(cleanedScraped.agencyName || detectPortal(url)),
       agentCRECI: DEMO_PROPERTY.agentCRECI,
     }
 
