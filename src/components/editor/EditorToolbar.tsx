@@ -11,7 +11,7 @@ import { useState } from 'react'
 
 export default function EditorToolbar() {
   const router = useRouter()
-  const { previewDevice, setPreviewDevice, currentLP, updateCurrentLP, isGenerating } = useAppStore()
+  const { previewDevice, setPreviewDevice, currentLP, updateCurrentLP, updateLandingPage, isGenerating } = useAppStore()
   const [saving, setSaving] = useState(false)
   const [publishing, setPublishing] = useState(false)
 
@@ -19,7 +19,9 @@ export default function EditorToolbar() {
 
   async function handleSave() {
     setSaving(true)
-    await new Promise((r) => setTimeout(r, 800))
+    // Sincroniza currentLP → landingPages (persiste no localStorage e dispara storage event no link)
+    updateLandingPage(currentLP!.id, currentLP!)
+    await new Promise((r) => setTimeout(r, 400))
     setSaving(false)
     toast.success('Alterações salvas!')
   }
