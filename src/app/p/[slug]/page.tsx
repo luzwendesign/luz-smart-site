@@ -54,7 +54,7 @@ export default function SlugPage() {
         const slug = (params.slug as string).toLowerCase()
         const pages: LandingPageConfig[] = state.landingPages || []
         const found = pages.find(
-          (l) => (l.customSlug || '').toLowerCase() === slug
+          (l) => (l.customSlug || '').toLowerCase() === slug || l.id.toLowerCase() === slug
         ) || null
         if (found) { setLp(found); setLoading(false); return true }
         return false
