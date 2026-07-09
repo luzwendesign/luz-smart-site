@@ -161,6 +161,8 @@ export interface User {
   creci?: string
   phone?: string
   whatsapp?: string
+  upgradedAt?: string
+  paymentId?: string
 }
 
 export interface ExtractionResult {
