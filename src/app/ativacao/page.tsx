@@ -33,11 +33,12 @@ export default function AtivacaoPage() {
 
     if (approved) {
       // Ativa Premium no store — persiste no localStorage
+      const now = new Date().toISOString()
       const premiumUser = {
-        ...(user || { id: `user_${Date.now()}`, name: 'Corretor', email: '' }),
+        ...(user || { id: `user_${Date.now()}`, name: 'Corretor', email: '', createdAt: now }),
         plan: 'premium' as const,
-        trialEndsAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(), // 1 ano
-        upgradedAt: new Date().toISOString(),
+        trialEndsAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
+        upgradedAt: now,
         paymentId: pmtId,
       }
       setUser(premiumUser)
