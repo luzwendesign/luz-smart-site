@@ -1,5 +1,6 @@
 'use client'
-import { useEffect, useState } from 'react'
+export const dynamic = 'force-dynamic'
+import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { useAppStore } from '@/lib/store'
 import { CheckCircle, XCircle, Loader2, Crown, ArrowRight, Sparkles } from 'lucide-react'
