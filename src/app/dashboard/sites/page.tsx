@@ -4,6 +4,7 @@ import { useAppStore } from '@/lib/store'
 import TopBar from '@/components/layout/TopBar'
 import { Plus, Edit, Trash2, Globe, CheckCircle, Eye, Crown, Lock, Copy, ExternalLink, Share2 } from 'lucide-react'
 import { useState } from 'react'
+import PremiumButton from '@/components/ui/PremiumButton'
 
 function SiteCard({ lp, isPremium, onDelete, updateLP }: { lp: any; isPremium: boolean; onDelete: () => void; updateLP: (patch: any) => void }) {
   const [copied, setCopied] = useState(false)
@@ -157,9 +158,7 @@ export default function SitesPage() {
         subtitle={`${landingPages.length} landing page${landingPages.length !== 1 ? 's' : ''}`}
         actions={
           atLimit ? (
-            <a href="https://mpago.la/2jcbcsh" target="_blank" rel="noopener noreferrer" className="btn-primary text-sm py-2.5 px-4">
-              <Crown className="w-4 h-4" /> Fazer upgrade
-            </a>
+            <PremiumButton label="Fazer upgrade" />
           ) : (
             <Link href="/dashboard/novo" className="btn-primary text-sm py-2.5 px-4">
               <Plus className="w-4 h-4" /> Criar novo
@@ -179,9 +178,7 @@ export default function SitesPage() {
                 Faça upgrade para criar sites ilimitados e personalizar os links.
               </p>
             </div>
-            <a href="https://mpago.la/2jcbcsh" target="_blank" rel="noopener noreferrer" className="btn-primary text-xs py-2 px-3 flex-shrink-0">
-              <Crown className="w-3.5 h-3.5" /> R$ 50/mês
-            </a>
+            <PremiumButton size="sm" label="R$ 50/mês" className="btn-primary flex-shrink-0" />
           </div>
         )}
 
@@ -218,9 +215,7 @@ export default function SitesPage() {
                     <p className="text-sm font-bold text-white mb-1">Sites ilimitados</p>
                     <p className="text-xs text-dark-400">Disponível no Premium</p>
                   </div>
-                  <a href="https://mpago.la/2jcbcsh" target="_blank" rel="noopener noreferrer" className="btn-primary text-xs py-2 px-4">
-                    <Crown className="w-3.5 h-3.5" /> Assinar
-                  </a>
+                  <PremiumButton size="sm" label="Assinar" />
                 </div>
               </div>
             )}

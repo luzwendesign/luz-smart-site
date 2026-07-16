@@ -7,6 +7,7 @@ import {
 } from 'lucide-react'
 import { cn, daysUntil } from '@/lib/utils'
 import { useAppStore } from '@/lib/store'
+import PremiumButton from '@/components/ui/PremiumButton'
 
 const nav = [
   { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -136,15 +137,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
             <p className="text-xs text-dark-400 mb-2">
               Teste gratuito — <span className="text-brand-400 font-semibold">{trialDays} dias restantes</span>
             </p>
-            <a
-              href="https://mpago.la/2jcbcsh"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-primary w-full justify-center text-xs py-2.5"
-            >
-              <Crown className="w-3.5 h-3.5" />
-              Assinar — R$ 50/mês
-            </a>
+            <PremiumButton className="btn-primary w-full justify-center" size="sm" label="Assinar — R$ 50/mês" />
           </div>
         )}
       </div>

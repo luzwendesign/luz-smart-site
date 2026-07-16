@@ -145,10 +145,10 @@ export default function TopBar({ title, subtitle, actions }: TopBarProps) {
                   className="flex items-center gap-3 px-4 py-2.5 text-sm text-dark-300 hover:text-white hover:bg-dark-800 transition-colors">
                   <Settings className="w-4 h-4" /> Configurações
                 </Link>
-                <a href="https://mpago.la/2jcbcsh" target="_blank" rel="noopener noreferrer" onClick={() => setShowProfile(false)}
+                <Link href="/dashboard/configuracoes" onClick={() => setShowProfile(false)}
                   className="flex items-center gap-3 px-4 py-2.5 text-sm text-dark-300 hover:text-white hover:bg-dark-800 transition-colors">
                   <CreditCard className="w-4 h-4" /> Plano & Pagamento
-                </a>
+                </Link>
               </div>
 
               <div className="border-t border-dark-800 py-1.5">

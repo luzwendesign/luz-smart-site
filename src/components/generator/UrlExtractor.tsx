@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { Link2, Sparkles, ArrowRight, CheckCircle, Loader2, AlertCircle, Crown } from 'lucide-react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
+import PremiumButton from '@/components/ui/PremiumButton'
 import { useAppStore } from '@/lib/store'
 import { createDefaultLP } from '@/lib/utils'
 import type { ExtractionResult } from '@/types'
@@ -141,9 +142,7 @@ export default function UrlExtractor() {
                 <p className="text-dark-400 text-sm mb-4">
                   O plano gratuito permite apenas <strong className="text-white">1 landing page</strong>. Faça upgrade para criar páginas ilimitadas.
                 </p>
-                <a href="https://mpago.la/2jcbcsh" target="_blank" rel="noopener noreferrer" className="btn-primary text-sm py-2.5 px-5 inline-flex">
-                  <Crown className="w-4 h-4" /> Assinar Premium — R$ 50/mês
-                </a>
+                <PremiumButton />
               </div>
             </div>
           </div>

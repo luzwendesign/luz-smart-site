@@ -3,6 +3,7 @@ import TopBar from '@/components/layout/TopBar'
 import { useAppStore } from '@/lib/store'
 import { Save, User, Bell, Shield, CreditCard, Eye, EyeOff, Check, X, Globe, Crown, Lock, Copy, CheckCircle, ExternalLink } from 'lucide-react'
 import { useState } from 'react'
+import PremiumButton from '@/components/ui/PremiumButton'
 
 export default function ConfiguracoesPage() {
   const { user, setUser } = useAppStore()
@@ -169,14 +170,7 @@ export default function ConfiguracoesPage() {
                       <span className="text-white font-medium">imoveis.suaempresa.com.br</span>.
                       Disponível apenas no plano Premium.
                     </p>
-                    <a
-                      href="https://mpago.la/2jcbcsh"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn-primary inline-flex py-3 px-6"
-                    >
-                      <Crown className="w-4 h-4" /> Assinar Premium — R$ 50/mês
-                    </a>
+                    <PremiumButton size="lg" />
                     <div className="mt-6 pt-6 border-t border-dark-800 grid grid-cols-2 gap-2 text-left max-w-xs mx-auto">
                       {['Sites ilimitados', 'Domínio personalizado', 'Pixel Meta & Analytics', 'Exportar leads CSV'].map((f) => (
                         <div key={f} className="flex items-center gap-2 text-xs text-dark-300">
@@ -411,14 +405,7 @@ export default function ConfiguracoesPage() {
                   {isPremium ? (
                     <button className="btn-secondary w-full justify-center text-sm py-2.5">Gerenciar assinatura</button>
                   ) : (
-                    <a
-                      href="https://mpago.la/2jcbcsh"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn-primary w-full justify-center text-sm py-2.5 flex items-center gap-2"
-                    >
-                      <Crown className="w-4 h-4" /> Assinar Premium — R$ 50/mês
-                    </a>
+                    <PremiumButton className="btn-primary w-full justify-center" />
                   )}
                 </div>
               </div>

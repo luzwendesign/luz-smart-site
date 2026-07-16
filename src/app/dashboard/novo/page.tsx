@@ -2,6 +2,7 @@
 import { useAppStore } from '@/lib/store'
 import UrlExtractor from '@/components/generator/UrlExtractor'
 import { Crown, Lock } from 'lucide-react'
+import PremiumButton from '@/components/ui/PremiumButton'
 
 export default function NovoPage() {
   const { user, totalLPsCreated } = useAppStore()
@@ -21,14 +22,7 @@ export default function NovoPage() {
             Faça upgrade para o Premium e crie sites ilimitados para todos os seus imóveis.
           </p>
           <div className="space-y-3">
-            <a
-              href="https://mpago.la/2jcbcsh"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-primary w-full justify-center py-3"
-            >
-              <Crown className="w-4 h-4" /> Assinar Premium — R$ 50/mês
-            </a>
+            <PremiumButton className="btn-primary w-full justify-center" size="lg" />
             <a href="/dashboard/sites" className="block text-sm text-dark-400 hover:text-white transition-colors">
               Voltar para Meus Sites
             </a>

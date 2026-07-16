@@ -7,6 +7,7 @@ import {
   BarChart3, ExternalLink, CheckCircle, Crown, Zap, Copy, Share2
 } from 'lucide-react'
 import { useState } from 'react'
+import PremiumButton from '@/components/ui/PremiumButton'
 import { formatCurrency, daysUntil } from '@/lib/utils'
 
 const STATS = [
@@ -67,9 +68,7 @@ export default function DashboardPage() {
                 <p className="text-dark-400 text-sm">Faça upgrade para continuar após o período de teste.</p>
               </div>
             </div>
-            <a href="https://mpago.la/2jcbcsh" target="_blank" rel="noopener noreferrer" className="btn-primary text-sm py-2.5 px-5">
-              <Crown className="w-4 h-4" /> Assinar por R$ 50/mês
-            </a>
+            <PremiumButton label="Assinar por R$ 50/mês" />
           </div>
         )}
 
