@@ -5,6 +5,7 @@ import TopBar from '@/components/layout/TopBar'
 import { Plus, Edit, Trash2, Globe, CheckCircle, Eye, Crown, Lock, Copy, ExternalLink, Share2 } from 'lucide-react'
 import { useState } from 'react'
 import PremiumButton from '@/components/ui/PremiumButton'
+import { getEffectivePlan } from '@/lib/blocklist'
 
 function SiteCard({ lp, isPremium, onDelete, updateLP }: { lp: any; isPremium: boolean; onDelete: () => void; updateLP: (patch: any) => void }) {
   const [copied, setCopied] = useState(false)
@@ -148,7 +149,7 @@ function SiteCard({ lp, isPremium, onDelete, updateLP }: { lp: any; isPremium: b
 
 export default function SitesPage() {
   const { landingPages, deleteLandingPage, updateLandingPage, user, totalLPsCreated } = useAppStore()
-  const isPremium = user?.plan === 'premium'
+  const isPremium = getEffectivePlan(user?.email, user?.plan ?? 'free') === 'premium'
   const atLimit = !isPremium && totalLPsCreated >= 1
 
   return (

@@ -3,10 +3,11 @@ import { useAppStore } from '@/lib/store'
 import UrlExtractor from '@/components/generator/UrlExtractor'
 import { Crown, Lock } from 'lucide-react'
 import PremiumButton from '@/components/ui/PremiumButton'
+import { getEffectivePlan } from '@/lib/blocklist'
 
 export default function NovoPage() {
   const { user, totalLPsCreated } = useAppStore()
-  const isPremium = user?.plan === 'premium'
+  const isPremium = getEffectivePlan(user?.email, user?.plan ?? 'free') === 'premium'
   const atLimit = !isPremium && totalLPsCreated >= 1
 
   if (atLimit) {

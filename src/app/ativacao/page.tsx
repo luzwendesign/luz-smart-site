@@ -2,6 +2,7 @@
 import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { useAppStore } from '@/lib/store'
+import { isEmailBlocked } from '@/lib/blocklist'
 import { XCircle, Loader2, Crown, ArrowRight, Sparkles } from 'lucide-react'
 
 type Status = 'loading' | 'success' | 'pending' | 'error'
@@ -23,6 +24,11 @@ function AtivacaoContent() {
     const approved = collectionStatus === 'approved' || mpStatus === 'approved'
     const pending  = collectionStatus === 'in_process' || collectionStatus === 'pending' ||
                      mpStatus === 'in_process' || mpStatus === 'pending'
+
+    if (approved && isEmailBlocked(user?.email)) {
+      setStatus('error')
+      return
+    }
 
     if (approved) {
       const now = new Date().toISOString()

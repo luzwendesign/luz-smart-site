@@ -7,6 +7,7 @@ import {
 } from 'lucide-react'
 import { cn, daysUntil } from '@/lib/utils'
 import { useAppStore } from '@/lib/store'
+import { getEffectivePlan } from '@/lib/blocklist'
 import PremiumButton from '@/components/ui/PremiumButton'
 
 const nav = [
@@ -30,7 +31,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
   const router = useRouter()
   const { user, setUser } = useAppStore()
   const trialDays = user?.trialEndsAt ? daysUntil(user.trialEndsAt) : 0
-  const isPremium = user?.plan === 'premium'
+  const isPremium = getEffectivePlan(user?.email, user?.plan ?? 'free') === 'premium'
 
   function handleLogout() {
     setUser(null)

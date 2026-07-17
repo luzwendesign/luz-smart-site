@@ -1,6 +1,7 @@
 'use client'
 import Link from 'next/link'
 import { useAppStore } from '@/lib/store'
+import { getEffectivePlan } from '@/lib/blocklist'
 import TopBar from '@/components/layout/TopBar'
 import {
   Plus, Globe, Eye, Users, TrendingUp, ArrowRight,
@@ -156,7 +157,7 @@ export default function DashboardPage() {
                   <div className="p-4">
                     <h3 className="font-bold text-white text-sm mb-1 truncate">{lp.propertyData.title}</h3>
                     <p className="text-dark-400 text-xs mb-2">{lp.propertyData.city} · {lp.propertyData.priceFormatted}</p>
-                    <CopyLink lp={lp} isPremium={user?.plan === 'premium'} />
+                    <CopyLink lp={lp} isPremium={getEffectivePlan(user?.email, user?.plan ?? 'free') === 'premium'} />
                     <div className="flex gap-2 mt-2">
                       <Link
                         href={`/dashboard/editor/${lp.id}`}

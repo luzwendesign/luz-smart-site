@@ -2,6 +2,7 @@
 import Link from 'next/link'
 import { Crown, CheckCircle, Zap, ArrowLeft } from 'lucide-react'
 import { useAppStore } from '@/lib/store'
+import { getEffectivePlan } from '@/lib/blocklist'
 import { daysUntil } from '@/lib/utils'
 
 const PAYMENT_LINK = 'https://mpago.la/2jcbcsh'
@@ -30,7 +31,7 @@ const PREMIUM_FEATURES = [
 
 export default function PlanosPage() {
   const { user } = useAppStore()
-  const isPremium = user?.plan === 'premium'
+  const isPremium = getEffectivePlan(user?.email, user?.plan ?? 'free') === 'premium'
   const trialDays = user?.trialEndsAt ? daysUntil(user.trialEndsAt) : 0
 
   return (

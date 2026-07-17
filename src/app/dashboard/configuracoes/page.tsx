@@ -4,10 +4,11 @@ import { useAppStore } from '@/lib/store'
 import { Save, User, Bell, Shield, CreditCard, Eye, EyeOff, Check, X, Globe, Crown, Lock, Copy, CheckCircle, ExternalLink } from 'lucide-react'
 import { useState, useRef } from 'react'
 import PremiumButton from '@/components/ui/PremiumButton'
+import { getEffectivePlan } from '@/lib/blocklist'
 
 export default function ConfiguracoesPage() {
   const { user, setUser } = useAppStore()
-  const isPremium = user?.plan === 'premium'
+  const isPremium = getEffectivePlan(user?.email, user?.plan ?? 'free') === 'premium'
 
   const [name, setName] = useState(user?.name || '')
   const [email, setEmail] = useState(user?.email || '')
