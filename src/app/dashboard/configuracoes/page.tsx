@@ -2,7 +2,7 @@
 import TopBar from '@/components/layout/TopBar'
 import { useAppStore } from '@/lib/store'
 import { Save, User, Bell, Shield, CreditCard, Eye, EyeOff, Check, X, Globe, Crown, Lock, Copy, CheckCircle, ExternalLink } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import PremiumButton from '@/components/ui/PremiumButton'
 
 export default function ConfiguracoesPage() {
@@ -29,6 +29,30 @@ export default function ConfiguracoesPage() {
   const [domainSaved, setDomainSaved] = useState(false)
   const [copiedDns, setCopiedDns] = useState(false)
 
+  const [photo, setPhoto] = useState<string | undefined>(user?.photo)
+  const [photoError, setPhotoError] = useState('')
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (file.size > 5 * 1024 * 1024) {
+      setPhotoError('A foto deve ter no máximo 5MB.')
+      return
+    }
+    if (!file.type.startsWith('image/')) {
+      setPhotoError('Selecione um arquivo JPG ou PNG.')
+      return
+    }
+    setPhotoError('')
+    const reader = new FileReader()
+    reader.onload = (ev) => {
+      const dataUrl = ev.target?.result as string
+      setPhoto(dataUrl)
+    }
+    reader.readAsDataURL(file)
+  }
+
   const [notifs, setNotifs] = useState({
     newLead: true,
     weeklyReport: true,
@@ -48,7 +72,7 @@ export default function ConfiguracoesPage() {
   const [activeTab, setActiveTab] = useState('profile')
 
   function handleSaveProfile() {
-    setUser({ ...user!, name, email, phone, creci })
+    setUser({ ...user!, name, email, phone, creci, photo })
     setSaved(true)
     setTimeout(() => setSaved(false), 2500)
   }
@@ -123,12 +147,28 @@ export default function ConfiguracoesPage() {
               <div className="card-dark space-y-5">
                 <h3 className="font-bold text-white">Informações do Perfil</h3>
                 <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 rounded-2xl bg-brand-400/20 flex items-center justify-center text-brand-400 font-black text-2xl">
-                    {name.charAt(0)}
+                  <div className="relative w-16 h-16 rounded-2xl overflow-hidden bg-brand-400/20 flex items-center justify-center text-brand-400 font-black text-2xl flex-shrink-0">
+                    {photo
+                      ? <img src={photo} alt="Foto de perfil" className="w-full h-full object-cover" />
+                      : name.charAt(0)
+                    }
                   </div>
                   <div>
-                    <button className="btn-secondary text-sm py-2 px-4">Alterar foto</button>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      className="hidden"
+                      onChange={handlePhotoChange}
+                    />
+                    <button
+                      onClick={() => fileInputRef.current?.click()}
+                      className="btn-secondary text-sm py-2 px-4"
+                    >
+                      Alterar foto
+                    </button>
                     <p className="text-dark-500 text-xs mt-1">JPG ou PNG. Máx. 5MB.</p>
+                    {photoError && <p className="text-red-400 text-xs mt-1">{photoError}</p>}
                   </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

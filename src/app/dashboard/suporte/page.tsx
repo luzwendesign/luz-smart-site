@@ -1,6 +1,6 @@
 'use client'
 import TopBar from '@/components/layout/TopBar'
-import { Book, Mail, Send, MessageSquare, Zap, CheckCircle, X, ChevronDown, ChevronUp, Clock } from 'lucide-react'
+import { Book, Mail, Send, MessageSquare, Zap, CheckCircle, X, ChevronDown, ChevronUp, Clock, RotateCcw, AlertTriangle, XCircle } from 'lucide-react'
 import { useState } from 'react'
 
 const ARTICLES = [
@@ -309,6 +309,80 @@ export default function SuportePage() {
             )}
           </div>
         )}
+
+        {/* Política de Reembolso */}
+        <div className="card-dark p-0 overflow-hidden">
+          <div className="p-4 border-b border-dark-800 flex items-center gap-2">
+            <RotateCcw className="w-5 h-5 text-yellow-400" />
+            <h3 className="font-bold text-white">Política de Reembolso</h3>
+          </div>
+          <div className="p-5 space-y-4">
+
+            {/* Regra principal */}
+            <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-4 flex items-start gap-3">
+              <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-green-300 font-semibold text-sm mb-1">Direito de arrependimento — 7 dias corridos</p>
+                <p className="text-dark-300 text-sm leading-relaxed">
+                  Você tem <strong className="text-white">7 dias corridos</strong> a partir da data do pagamento para solicitar o reembolso integral, sem necessidade de justificativa.
+                  Esse direito está garantido pelo Código de Defesa do Consumidor (Art. 49).
+                </p>
+              </div>
+            </div>
+
+            {/* Após 7 dias */}
+            <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 flex items-start gap-3">
+              <AlertTriangle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-yellow-300 font-semibold text-sm mb-1">Após 7 dias — cancelamento sem reembolso</p>
+                <p className="text-dark-300 text-sm leading-relaxed">
+                  Passado o prazo de 7 dias, não é possível obter reembolso do valor pago.
+                  Você poderá <strong className="text-white">cancelar a assinatura</strong> a qualquer momento, mantendo o acesso Premium até o fim do período pago.
+                </p>
+              </div>
+            </div>
+
+            {/* Como solicitar */}
+            <div>
+              <p className="text-sm font-semibold text-white mb-3">Como solicitar o reembolso</p>
+              <ol className="space-y-2.5">
+                {[
+                  'Entre em contato pelo WhatsApp ou e-mail de suporte dentro do prazo de 7 dias.',
+                  'Informe o nome completo, e-mail da conta e o comprovante de pagamento (ID da transação Pix ou número do pedido).',
+                  'Nossa equipe confirmará a solicitação e processará o reembolso via Mercado Pago.',
+                  'O valor retorna à sua conta em até 5 dias úteis após a confirmação.',
+                ].map((step, i) => (
+                  <li key={i} className="flex items-start gap-3 text-sm text-dark-300">
+                    <span className="w-6 h-6 rounded-full bg-brand-400/20 text-brand-400 font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">
+                      {i + 1}
+                    </span>
+                    {step}
+                  </li>
+                ))}
+              </ol>
+            </div>
+
+            {/* Não se aplica */}
+            <div className="bg-dark-800 border border-dark-700 rounded-xl p-4 flex items-start gap-3">
+              <XCircle className="w-5 h-5 text-dark-400 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-dark-300 font-semibold text-sm mb-1">Casos sem direito a reembolso</p>
+                <ul className="space-y-1 text-xs text-dark-400">
+                  <li>• Solicitações feitas após 7 dias corridos da data do pagamento.</li>
+                  <li>• Contas com uso comprovado dos recursos Premium (criação de mais de 1 site, etc.).</li>
+                  <li>• Cancelamentos de renovação de assinatura (aplicam-se à próxima cobrança, não à vigente).</li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="pt-1 border-t border-dark-800 flex items-center gap-3">
+              <p className="text-xs text-dark-500 flex-1">Dúvidas sobre reembolso?</p>
+              <button onClick={openWhatsApp} className="text-xs text-brand-400 hover:text-brand-300 font-medium">
+                Falar com suporte →
+              </button>
+            </div>
+          </div>
+        </div>
 
         {/* Artigos */}
         <div className="card-dark p-0 overflow-hidden">

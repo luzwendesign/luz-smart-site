@@ -1,9 +1,8 @@
 'use client'
 import { useState } from 'react'
-import { Crown, X, Copy, CheckCircle, ExternalLink, Zap } from 'lucide-react'
+import { Crown, X, CheckCircle, Zap, AlertTriangle, ArrowRight } from 'lucide-react'
 
 const MP_LINK = 'https://mpago.la/2jcbcsh'
-const ACTIVATION_URL = 'https://luz-smart-site.vercel.app/ativacao?collection_status=approved'
 
 interface PremiumButtonProps {
   className?: string
@@ -13,7 +12,9 @@ interface PremiumButtonProps {
 
 export default function PremiumButton({ className = 'btn-primary', size = 'md', label }: PremiumButtonProps) {
   const [showModal, setShowModal] = useState(false)
-  const [copied, setCopied] = useState(false)
+  const [step, setStep] = useState<'info' | 'pix'>('info')
+  const [pixId, setPixId] = useState('')
+  const [error, setError] = useState('')
 
   const sizeClasses = {
     sm: 'text-xs py-2 px-3',
@@ -24,12 +25,26 @@ export default function PremiumButton({ className = 'btn-primary', size = 'md', 
   function handleClick() {
     window.open(MP_LINK, '_blank')
     setShowModal(true)
+    setStep('info')
+    setPixId('')
+    setError('')
   }
 
-  function copyLink() {
-    navigator.clipboard.writeText(ACTIVATION_URL)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+  function handleClose() {
+    setShowModal(false)
+    setStep('info')
+    setPixId('')
+    setError('')
+  }
+
+  function handleActivate() {
+    const clean = pixId.trim()
+    if (clean.length < 10) {
+      setError('Informe o ID da transação Pix corretamente (mínimo 10 caracteres).')
+      return
+    }
+    // Redireciona para /ativacao com o ID real fornecido pelo usuário
+    window.location.href = `/ativacao?collection_status=approved&payment_id=${encodeURIComponent(clean)}`
   }
 
   return (
@@ -42,10 +57,7 @@ export default function PremiumButton({ className = 'btn-primary', size = 'md', 
       {showModal && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
           <div className="card-dark w-full max-w-md p-6 space-y-5 relative">
-            <button
-              onClick={() => setShowModal(false)}
-              className="absolute top-4 right-4 text-dark-500 hover:text-white transition-colors"
-            >
+            <button onClick={handleClose} className="absolute top-4 right-4 text-dark-500 hover:text-white transition-colors">
               <X className="w-5 h-5" />
             </button>
 
@@ -62,42 +74,79 @@ export default function PremiumButton({ className = 'btn-primary', size = 'md', 
 
             <hr className="border-dark-700" />
 
-            {/* Pix instruction */}
-            <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 space-y-2">
-              <p className="text-yellow-300 font-semibold text-sm">Pagou via Pix?</p>
-              <p className="text-dark-300 text-sm leading-relaxed">
-                Após confirmar o Pix, o acesso Premium <strong>não é liberado automaticamente</strong>.
-                Clique no botão abaixo para ativar seu plano.
-              </p>
-            </div>
+            {step === 'info' && (
+              <>
+                <div className="space-y-3">
+                  {/* Cartão */}
+                  <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-4">
+                    <p className="text-green-300 font-semibold text-sm mb-1">Pagou com cartão?</p>
+                    <p className="text-dark-300 text-sm">
+                      O acesso é liberado automaticamente assim que o MP confirmar. <strong className="text-white">Feche esta janela</strong> e aguarde alguns instantes.
+                    </p>
+                  </div>
 
-            <a
-              href={ACTIVATION_URL}
-              className="btn-primary w-full justify-center py-3 text-sm flex items-center gap-2"
-            >
-              <Crown className="w-4 h-4" />
-              Já paguei — Ativar meu Premium
-              <ExternalLink className="w-3.5 h-3.5 opacity-70" />
-            </a>
+                  {/* Pix */}
+                  <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4">
+                    <p className="text-yellow-300 font-semibold text-sm mb-1">Pagou via Pix?</p>
+                    <p className="text-dark-300 text-sm">
+                      Após confirmar o pagamento Pix, clique abaixo para ativar seu plano informando o ID da transação.
+                    </p>
+                  </div>
+                </div>
 
-            {/* Copy link */}
-            <div className="space-y-2">
-              <p className="text-dark-500 text-xs text-center">ou copie o link e acesse depois</p>
-              <button
-                onClick={copyLink}
-                className="w-full flex items-center justify-between bg-dark-800 border border-dark-700 rounded-xl px-4 py-3 text-xs text-dark-300 hover:border-brand-400/50 transition-colors group"
-              >
-                <span className="truncate font-mono">{ACTIVATION_URL}</span>
-                {copied
-                  ? <CheckCircle className="w-4 h-4 text-green-400 flex-shrink-0 ml-2" />
-                  : <Copy className="w-4 h-4 text-dark-500 group-hover:text-brand-400 flex-shrink-0 ml-2 transition-colors" />
-                }
-              </button>
-            </div>
+                <button
+                  onClick={() => setStep('pix')}
+                  className="btn-primary w-full justify-center py-3 text-sm"
+                >
+                  <Crown className="w-4 h-4" />
+                  Já paguei via Pix — Ativar agora
+                  <ArrowRight className="w-4 h-4" />
+                </button>
 
-            <p className="text-dark-600 text-xs text-center">
-              Pago com cartão? O acesso é liberado automaticamente — feche esta janela.
-            </p>
+                <p className="text-dark-600 text-xs text-center">
+                  Não pagou ainda? Finalize o pagamento no Mercado Pago e volte aqui.
+                </p>
+              </>
+            )}
+
+            {step === 'pix' && (
+              <>
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-white block">
+                    ID da transação Pix
+                  </label>
+                  <p className="text-dark-400 text-xs">
+                    Encontre o ID no comprovante Pix do seu banco (campo "Identificador", "ID E2E" ou "Código da transação").
+                  </p>
+                  <input
+                    type="text"
+                    value={pixId}
+                    onChange={(e) => { setPixId(e.target.value); setError('') }}
+                    placeholder="Ex: E60701190202607161700DY58ZVPDMVU"
+                    className="w-full bg-dark-800 border border-dark-700 rounded-xl px-4 py-3 text-sm text-white placeholder:text-dark-500 focus:outline-none focus:border-brand-400 font-mono"
+                  />
+                  {error && (
+                    <div className="flex items-center gap-2 text-red-400 text-xs">
+                      <AlertTriangle className="w-3.5 h-3.5 flex-shrink-0" />
+                      {error}
+                    </div>
+                  )}
+                </div>
+
+                <button
+                  onClick={handleActivate}
+                  disabled={pixId.trim().length < 10}
+                  className="btn-primary w-full justify-center py-3 text-sm disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  <CheckCircle className="w-4 h-4" />
+                  Confirmar e ativar Premium
+                </button>
+
+                <button onClick={() => setStep('info')} className="w-full text-xs text-dark-500 hover:text-dark-300 transition-colors">
+                  ← Voltar
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}
