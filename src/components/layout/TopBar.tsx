@@ -116,8 +116,11 @@ export default function TopBar({ title, subtitle, actions }: TopBarProps) {
             onClick={() => { setShowProfile(!showProfile); setShowNotif(false) }}
             className="flex items-center gap-2.5 pl-3 pr-2 py-1.5 rounded-xl hover:bg-dark-800 transition-colors"
           >
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-dark-950 font-bold text-sm">
-              {user?.name?.charAt(0) ?? 'C'}
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-dark-950 font-bold text-sm overflow-hidden flex-shrink-0">
+              {user?.photo
+                ? <img src={user.photo} alt="Foto" className="w-full h-full object-cover" />
+                : (user?.name?.charAt(0) ?? 'C')
+              }
             </div>
             <div className="text-left hidden sm:block">
               <p className="text-sm font-semibold text-white leading-tight">{user?.name ?? 'Corretor'}</p>
@@ -129,10 +132,18 @@ export default function TopBar({ title, subtitle, actions }: TopBarProps) {
           {showProfile && (
             <div className="absolute right-0 top-12 w-56 bg-dark-900 border border-dark-700 rounded-2xl shadow-2xl z-50 overflow-hidden">
               {/* User info */}
-              <div className="px-4 py-3 border-b border-dark-800">
-                <p className="text-sm font-semibold text-white">{user?.name}</p>
-                <p className="text-xs text-dark-400">{user?.email}</p>
-                {user?.creci && <p className="text-xs text-dark-500 mt-0.5">{user.creci}</p>}
+              <div className="px-4 py-3 border-b border-dark-800 flex items-center gap-3">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-dark-950 font-bold text-sm overflow-hidden flex-shrink-0">
+                  {user?.photo
+                    ? <img src={user.photo} alt="Foto" className="w-full h-full object-cover" />
+                    : (user?.name?.charAt(0) ?? 'C')
+                  }
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-white truncate">{user?.name}</p>
+                  <p className="text-xs text-dark-400 truncate">{user?.email}</p>
+                  {user?.creci && <p className="text-xs text-dark-500 mt-0.5">{user.creci}</p>}
+                </div>
               </div>
 
               {/* Menu items */}

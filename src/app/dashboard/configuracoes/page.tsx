@@ -2,7 +2,7 @@
 import TopBar from '@/components/layout/TopBar'
 import { useAppStore } from '@/lib/store'
 import { Save, User, Bell, Shield, CreditCard, Eye, EyeOff, Check, X, Globe, Crown, Lock, Copy, CheckCircle, ExternalLink } from 'lucide-react'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import PremiumButton from '@/components/ui/PremiumButton'
 import { getEffectivePlan } from '@/lib/blocklist'
 
@@ -15,6 +15,17 @@ export default function ConfiguracoesPage() {
   const [phone, setPhone] = useState(user?.phone || '')
   const [creci, setCreci] = useState(user?.creci || '')
   const [saved, setSaved] = useState(false)
+
+  // Re-sincroniza campos quando Zustand hidrata o user do localStorage
+  useEffect(() => {
+    if (user) {
+      setName(user.name || '')
+      setEmail(user.email || '')
+      setPhone(user.phone || '')
+      setCreci(user.creci || '')
+      setPhoto(user.photo)
+    }
+  }, [user?.id])
 
   const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')

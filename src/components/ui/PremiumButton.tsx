@@ -37,13 +37,22 @@ export default function PremiumButton({ className = 'btn-primary', size = 'md', 
     setError('')
   }
 
+  function isValidMPId(id: string): boolean {
+    // Formato E2E do Banco Central: E + 29-34 chars alfanuméricos
+    if (/^E[A-Z0-9]{20,34}$/i.test(id)) return true
+    // Identificador interno MP: mpqrinter + dígitos
+    if (/^mpqrinter\d{8,}$/i.test(id)) return true
+    // Outros formatos MP: sequências longas alfanuméricas sem espaço (min 20 chars)
+    if (/^[A-Z0-9]{20,}$/i.test(id)) return true
+    return false
+  }
+
   function handleActivate() {
-    const clean = pixId.trim()
-    if (clean.length < 10) {
-      setError('Informe o ID da transação Pix corretamente (mínimo 10 caracteres).')
+    const clean = pixId.trim().replace(/\s+/g, '')
+    if (!isValidMPId(clean)) {
+      setError('ID inválido. Cole o identificador exato do comprovante Pix (ex: E60701...DY58 ou mpqrinter169...). Números genéricos não são aceitos.')
       return
     }
-    // Redireciona para /ativacao com o ID real fornecido pelo usuário
     window.location.href = `/ativacao?collection_status=approved&payment_id=${encodeURIComponent(clean)}`
   }
 

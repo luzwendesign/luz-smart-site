@@ -91,11 +91,24 @@ export default function UrlExtractor() {
       addLandingPage(lp)
       setCurrentStep(3)
 
-      if (result.partial) {
-        toast('O portal bloqueou a leitura automática. Preencha título, preço e cidade no editor.', {
-          icon: '⚠️',
-          duration: 8000,
-          style: { background: '#1e293b', color: '#e2e8f0', border: '1px solid #f59e0b44' },
+      // Detecta campos importantes que ficaram vazios após extração
+      const d = result.data
+      const missing: string[] = []
+      if (!d.title || d.title.length < 5)          missing.push('Título do imóvel')
+      if (!d.price || d.price === '0')              missing.push('Preço')
+      if (!d.city)                                  missing.push('Cidade')
+      if (!d.address)                               missing.push('Endereço')
+      if (!d.description || d.description.length < 20) missing.push('Descrição')
+      if (!d.agentName)                             missing.push('Nome do corretor')
+      if (!d.whatsapp)                              missing.push('WhatsApp')
+
+      if (result.partial || missing.length > 0) {
+        const missingText = missing.length > 0
+          ? `Preencha no editor: ${missing.join(', ')}.`
+          : 'Verifique os dados no editor.'
+        toast(`⚠️ Extração parcial — ${missingText}`, {
+          duration: 10000,
+          style: { background: '#1e293b', color: '#e2e8f0', border: '1px solid #f59e0b44', maxWidth: '420px' },
         })
       } else {
         toast.success('Dados extraídos com sucesso! Landing page criada.')

@@ -3,7 +3,8 @@ import { useState } from 'react'
 import {
   Home, Image, Palette, Type, MousePointer, Globe, Code,
   BarChart2, ChevronDown, ChevronUp, Sparkles, Loader2,
-  Eye, EyeOff, GripVertical, Plus, Trash2, Share2, Copy, CheckCircle, ExternalLink
+  Eye, EyeOff, GripVertical, Plus, Trash2, Share2, Copy, CheckCircle, ExternalLink,
+  AlertTriangle
 } from 'lucide-react'
 import { useAppStore } from '@/lib/store'
 import { cn } from '@/lib/utils'
@@ -93,6 +94,27 @@ export default function EditorPanel() {
           ))}
         </div>
       </div>
+
+      {/* Banner de campos faltantes */}
+      {editorTab === 'property' && (() => {
+        const missing: string[] = []
+        if (!p.title || p.title.length < 5)             missing.push('Título')
+        if (!p.price || p.price === '0')                missing.push('Preço')
+        if (!p.city)                                    missing.push('Cidade')
+        if (!p.address)                                 missing.push('Endereço')
+        if (!p.description || p.description.length < 20) missing.push('Descrição')
+        if (!p.whatsapp)                                missing.push('WhatsApp')
+        if (missing.length === 0) return null
+        return (
+          <div className="mx-3 mt-3 bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-3 flex items-start gap-2.5">
+            <AlertTriangle className="w-4 h-4 text-yellow-400 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-yellow-300 font-semibold text-xs mb-1">Campos a preencher</p>
+              <p className="text-dark-300 text-xs">{missing.join(' · ')}</p>
+            </div>
+          </div>
+        )
+      })()}
 
       {/* Panel content */}
       <div className="flex-1 overflow-y-auto">
