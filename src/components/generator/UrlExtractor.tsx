@@ -6,7 +6,7 @@ import Link from 'next/link'
 import toast from 'react-hot-toast'
 import PremiumButton from '@/components/ui/PremiumButton'
 import { useAppStore } from '@/lib/store'
-import { createDefaultLP } from '@/lib/utils'
+import { createDefaultLP, formatWhatsApp } from '@/lib/utils'
 import type { ExtractionResult } from '@/types'
 
 const PORTALS = [
@@ -86,7 +86,20 @@ export default function UrlExtractor() {
 
       await new Promise((r) => setTimeout(r, 600))
 
-      const lp = { ...createDefaultLP(result.data), userId: user?.id }
+      // Injeta dados do perfil do corretor logado na LP
+      const lpData = result.data
+      if (user) {
+        if (user.name)     lpData.agentName  = user.name
+        if (user.phone)    lpData.phone      = user.phone
+        if (user.whatsapp) lpData.whatsapp   = user.whatsapp
+        if (user.email)    lpData.email      = user.email
+        if (user.creci)    lpData.agentCRECI = user.creci
+      }
+      const lp = { ...createDefaultLP(lpData), userId: user?.id }
+      // Atualiza link do WhatsApp CTA com número do corretor
+      if (user?.whatsapp) {
+        lp.ctaWhatsApp = `https://wa.me/${formatWhatsApp(user.whatsapp)}?text=${encodeURIComponent(`Olá! Tenho interesse no imóvel: ${lpData.title}`)}`
+      }
       setCurrentLP(lp)
       addLandingPage(lp)
       setCurrentStep(3)
